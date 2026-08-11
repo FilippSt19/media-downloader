@@ -1,7 +1,7 @@
 import { detectPlatform } from "../platforms/platformDetector.js";
-import type { AnalyzeMediaResponse } from "../types/media.js";
+import { getYouTubeMetadata } from "../platforms/youtube.js";
 
-export function analyzeMediaUrl(url: string): AnalyzeMediaResponse {
+export async function analyzeMediaUrl(url: string) {
   const normalizedUrl = url.trim();
 
   if (!normalizedUrl) {
@@ -14,9 +14,21 @@ export function analyzeMediaUrl(url: string): AnalyzeMediaResponse {
     throw new Error("Unsupported or invalid media URL.");
   }
 
+  if (platform === "youtube") {
+    const media = await getYouTubeMetadata(normalizedUrl);
+
+    return {
+      success: true,
+      platform,
+      url: normalizedUrl,
+      media,
+    };
+  }
+
   return {
     success: true,
     platform,
     url: normalizedUrl,
+    media: null,
   };
 }
