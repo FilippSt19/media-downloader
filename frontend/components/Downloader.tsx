@@ -4,11 +4,18 @@ import { useState } from "react";
 
 import PlatformBadge from "./PlatformBadge";
 import UrlInput from "./UrlInput";
+import MediaPreview from "./MediaPreview";
 
 type AnalyzeResult = {
   success: boolean;
   platform?: "youtube" | "instagram" | "tiktok";
   url?: string;
+  media?: {
+    title: string;
+    thumbnail: string | null;
+    duration: number | null;
+    uploader: string | null;
+  } | null;
   error?: string;
 };
 
@@ -94,12 +101,14 @@ export default function Downloader() {
         <PlatformBadge name="TikTok" />
       </div>
 
-      {result?.platform && (
-        <div className="mt-8 rounded-xl border border-green-500/20 bg-green-500/5 p-4 text-center">
-          <p className="text-sm text-green-400">
-            Valid {result.platform} URL detected.
-          </p>
-        </div>
+      {result?.platform && result.media && (
+        <MediaPreview
+          title={result.media.title}
+          thumbnail={result.media.thumbnail}
+          duration={result.media.duration}
+          uploader={result.media.uploader}
+          platform={result.platform}
+        />
       )}
 
       {error && (
