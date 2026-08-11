@@ -5,9 +5,18 @@ import { useState } from "react";
 import PlatformBadge from "./PlatformBadge";
 import UrlInput from "./UrlInput";
 
+type AnalyzeResult = {
+  success: boolean;
+  platform?: "youtube" | "instagram" | "tiktok";
+  url?: string;
+  error?: string;
+};
+
 export default function Downloader() {
   const [url, setUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [result, setResult] = useState<AnalyzeResult | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const handleAnalyze = async () => {
     if (!url.trim()) {
@@ -15,13 +24,36 @@ export default function Downloader() {
     }
 
     setIsLoading(true);
+    setError(null);
+    setResult(null);
 
     try {
-      console.log("Analyzing:", url);
+      const response = await fetch(
+        "http://localhost:4000/api/media/analyze",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            url: url.trim(),
+          }),
+        }
+      );
 
-      // Temporary simulation.
-      // We will replace this with our backend API.
-      await new Promise((resolve) => setTimeout(resolve, 800));
+      const data: AnalyzeResult = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Unable to analyze this URL.");
+      }
+
+      setResult(data);
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Something went wrong."
+      );
     } finally {
       setIsLoading(false);
     }
@@ -47,7 +79,7 @@ export default function Downloader() {
         </p>
       </div>
 
-      <div className="mt-10 rounded-2xl border border-white/10 bg-white/[0.03] p-3 shadow-2xl shadow-black/20">
+      <div className="mt-10 rounded-2xl border border-white/10 bg-white/[0.03] p-3">
         <UrlInput
           url={url}
           onUrlChange={setUrl}
@@ -61,6 +93,22 @@ export default function Downloader() {
         <PlatformBadge name="Instagram" />
         <PlatformBadge name="TikTok" />
       </div>
+
+      {result?.platform && (
+        <div className="mt-8 rounded-xl border border-green-500/20 bg-green-500/5 p-4 text-center">
+          <p className="text-sm text-green-400">
+            Valid {result.platform} URL detected.
+          </p>
+        </div>
+      )}
+
+      {error && (
+        <div className="mt-8 rounded-xl border border-red-500/20 bg-red-500/5 p-4 text-center">
+          <p className="text-sm text-red-400">
+            {error}
+          </p>
+        </div>
+      )}
     </section>
   );
 }
