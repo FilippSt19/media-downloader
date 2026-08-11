@@ -2,10 +2,11 @@ import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
 
+import mediaRoutes from "./routes/mediaRoutes.js";
+
 dotenv.config();
 
 const app = express();
-
 const PORT = process.env.PORT || 4000;
 
 app.use(
@@ -15,6 +16,8 @@ app.use(
 );
 
 app.use(express.json());
+
+app.use("/api/media", mediaRoutes);
 
 app.get("/health", (_req, res) => {
   res.status(200).json({
