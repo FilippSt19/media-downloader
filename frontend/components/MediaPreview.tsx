@@ -1,9 +1,23 @@
+import FormatSelector from "./FormatSelector";
+
 type MediaPreviewProps = {
   title: string;
   thumbnail: string | null;
   duration: number | null;
   uploader: string | null;
   platform: string;
+
+  formats: {
+    video: {
+      quality: string;
+      height: number;
+    }[];
+
+    audio: {
+      quality: string;
+      bitrate: number;
+    }[];
+  };
 };
 
 function formatDuration(seconds: number | null) {
@@ -21,6 +35,7 @@ export default function MediaPreview({
   duration,
   uploader,
   platform,
+  formats,
 }: MediaPreviewProps) {
   return (
     <div className="mt-8 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03]">
@@ -48,6 +63,11 @@ export default function MediaPreview({
           </div>
         </div>
       </div>
+        <FormatSelector
+            videoFormats={formats.video}    
+        audioFormats={formats.audio}
+
+        />
     </div>
   );
 }

@@ -15,6 +15,16 @@ type AnalyzeResult = {
     thumbnail: string | null;
     duration: number | null;
     uploader: string | null;
+    formats: {
+      video: {
+        quality: string;
+        height: number;
+      }[];
+      audio: {
+        quality: string;
+        bitrate: number;
+      }[];
+    };
   } | null;
   error?: string;
 };
@@ -108,6 +118,7 @@ export default function Downloader() {
           duration={result.media.duration}
           uploader={result.media.uploader}
           platform={result.platform}
+          formats={result.media.formats}
         />
       )}
 
