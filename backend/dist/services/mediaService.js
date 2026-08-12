@@ -2,7 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.analyzeMediaUrl = analyzeMediaUrl;
 const platformDetector_js_1 = require("../platforms/platformDetector.js");
-function analyzeMediaUrl(url) {
+const youtube_js_1 = require("../platforms/youtube.js");
+async function analyzeMediaUrl(url) {
     const normalizedUrl = url.trim();
     if (!normalizedUrl) {
         throw new Error("URL is required.");
@@ -11,9 +12,19 @@ function analyzeMediaUrl(url) {
     if (!platform) {
         throw new Error("Unsupported or invalid media URL.");
     }
+    if (platform === "youtube") {
+        const media = await (0, youtube_js_1.getYouTubeMetadata)(normalizedUrl);
+        return {
+            success: true,
+            platform,
+            url: normalizedUrl,
+            media,
+        };
+    }
     return {
         success: true,
         platform,
         url: normalizedUrl,
+        media: null,
     };
 }

@@ -6,6 +6,9 @@ import PlatformBadge from "./PlatformBadge";
 import UrlInput from "./UrlInput";
 import MediaPreview from "./MediaPreview";
 
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
+
 type AnalyzeResult = {
   success: boolean;
   platform?: "youtube" | "instagram" | "tiktok";
@@ -46,7 +49,7 @@ export default function Downloader() {
 
     try {
       const response = await fetch(
-        "http://localhost:4000/api/media/analyze",
+        `${API_URL}/api/media/analyze`,
         {
           method: "POST",
           headers: {
@@ -113,6 +116,7 @@ export default function Downloader() {
 
       {result?.platform && result.media && (
         <MediaPreview
+          url={result.url!}
           title={result.media.title}
           thumbnail={result.media.thumbnail}
           duration={result.media.duration}

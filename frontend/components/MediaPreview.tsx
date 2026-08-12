@@ -1,6 +1,8 @@
+import Image from "next/image";
 import FormatSelector from "./FormatSelector";
 
 type MediaPreviewProps = {
+  url: string;
   title: string;
   thumbnail: string | null;
   duration: number | null;
@@ -26,10 +28,13 @@ function formatDuration(seconds: number | null) {
   const minutes = Math.floor(seconds / 60);
   const remainingSeconds = Math.floor(seconds % 60);
 
-  return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
+  return `${minutes}:${remainingSeconds
+    .toString()
+    .padStart(2, "0")}`;
 }
 
 export default function MediaPreview({
+  url,
   title,
   thumbnail,
   duration,
@@ -41,9 +46,11 @@ export default function MediaPreview({
     <div className="mt-8 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03]">
       <div className="flex flex-col gap-5 p-5 sm:flex-row">
         {thumbnail && (
-          <img
+          <Image
             src={thumbnail}
             alt={title}
+            width={640}
+            height={360}
             className="aspect-video w-full rounded-xl object-cover sm:w-64"
           />
         )}
@@ -63,11 +70,13 @@ export default function MediaPreview({
           </div>
         </div>
       </div>
-        <FormatSelector
-            videoFormats={formats.video}    
-        audioFormats={formats.audio}
 
-        />
+      <FormatSelector
+        url={url}
+        title={title}
+        videoFormats={formats.video}
+        audioFormats={formats.audio}
+      />
     </div>
   );
 }
