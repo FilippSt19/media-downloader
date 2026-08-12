@@ -1,13 +1,18 @@
-import { execFile } from "node:child_process";
+import { spawn } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
-import { promisify } from "node:util";
 import { getSocket } from "../socket.js";
 
-const execFileAsync = promisify(execFile);
-
 export type DownloadType = "video" | "audio";
+
+function parseProgress(line: string): number | null {
+  const match = line.match(/\[download\]\s+(\d+(?:\.\d+)?)%/);
+
+  if (!match) return null;
+
+  return Math.floor(Number(match[1]));
+}
 
 type DownloadOptions = {
   url: string;
@@ -47,9 +52,10 @@ export async function downloadMedia({
   if (type === "audio") {
     const outputTemplate = path.join(TEMP_DIR, `${id}.%(ext)s`);
 
-    await execFileAsync(
-      "yt-dlp",
-      [
+    await new Promise<void>((resolve, reject) => {
+      const io = getSocket();
+
+      const process = spawn("yt-dlp", [
         "--no-playlist",
         "-x",
         "--audio-format",
@@ -59,11 +65,37 @@ export async function downloadMedia({
         "-o",
         outputTemplate,
         url,
-      ],
-      {
-        maxBuffer: 20 * 1024 * 1024,
-      }
-    );
+      ]);
+
+      process.stdout.on("data", (chunk) => {
+        const text = chunk.toString();
+
+        const progress = parseProgress(text);
+
+        if (progress !== null) {
+          io.emit("download-progress", {
+            progress,
+            status: "Downloading..."
+          });
+        }
+      });
+
+      process.stderr.on("data", console.error);
+
+      process.on("close", (code) => {
+        if (code === 0) {
+          io.emit("download-progress", {
+            progress: 100,
+            status: "Finished"
+          });
+
+          resolve();
+          return;
+        }
+
+        reject(new Error("Download failed"));
+      });
+    });
 
     return {
       filePath: path.join(TEMP_DIR, `${id}.mp3`),
@@ -73,9 +105,8 @@ export async function downloadMedia({
 
   const filePath = path.join(TEMP_DIR, `${id}.mp4`);
 
-  await execFileAsync(
-    "yt-dlp",
-    [
+  await new Promise<void>((resolve, reject) => {
+    const proc = spawn("yt-dlp", [
       "--no-playlist",
       "-f",
       `bestvideo[height<=${quality}]+bestaudio/best[height<=${quality}]`,
@@ -84,11 +115,13 @@ export async function downloadMedia({
       "-o",
       filePath,
       url,
-    ],
-    {
-      maxBuffer: 20 * 1024 * 1024,
-    }
-  );
+    ]);
+    proc.on("close", (code) => {
+      if (code === 0) resolve();
+      else reject(new Error(`Process exited with code ${code}`));
+    });
+    proc.on("error", reject);
+  });
 
   return {
     filePath,

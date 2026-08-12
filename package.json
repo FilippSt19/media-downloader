@@ -1,5 +1,14 @@
 {
-  "dependencies": {
-    "socket.io": "^4.8.3"
+  "name": "media-downloader-workspace",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently -n FRONTEND,BACKEND -c blue,green \"npm --prefix frontend run dev\" \"docker compose up backend\"",
+    "frontend": "npm --prefix frontend run dev",
+    "backend": "docker compose up backend",
+    "stop": "docker compose down",
+    "rebuild": "docker compose down && docker compose build --no-cache backend && docker compose up backend"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.1"
   }
 }

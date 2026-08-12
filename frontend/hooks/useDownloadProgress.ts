@@ -10,6 +10,14 @@ export function useDownloadProgress() {
     useEffect(() => {
         const socket = io("http://localhost:4000");
 
+        socket.on("connect", () => {
+            console.log("Socket connected");
+        });
+
+        socket.on("disconnect", () => {
+            console.log("Socket disconnected");
+        });
+
         socket.on("download-progress", (data) => {
             setProgress(data.progress);
             setStatus(data.status);
