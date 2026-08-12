@@ -1,10 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { API } from "@/config/api";
 import { useDownloadProgress } from "@/hooks/useDownloadProgress";
-
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
 
 type VideoFormat = {
   quality: string;
@@ -64,7 +62,7 @@ export default function FormatSelector({
         type: mediaType,
         quality: Number(quality),
       });
-      const response = await fetch(`${API_URL}/api/media/download`, {
+      const response = await fetch(`${API.BASE_URL}/api/media/download`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

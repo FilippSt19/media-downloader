@@ -1,13 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { API } from "@/config/api";
 
 import PlatformBadge from "./PlatformBadge";
 import UrlInput from "./UrlInput";
 import MediaPreview from "./MediaPreview";
-
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
 
 type AnalyzeResult = {
   success: boolean;
@@ -49,7 +47,7 @@ export default function Downloader() {
 
     try {
       const response = await fetch(
-        `${API_URL}/api/media/analyze`,
+        `${API.BASE_URL}/api/media/analyze`,
         {
           method: "POST",
           headers: {
