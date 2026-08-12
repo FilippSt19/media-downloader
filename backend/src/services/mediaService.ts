@@ -1,5 +1,5 @@
-import { detectPlatform } from "../platforms/platformDetector.js";
-import { getYouTubeMetadata } from "../platforms/youtube.js";
+import { detectPlatform } from "../platforms/detector.js";
+import { getYouTubeMetadata } from "../platforms/youtube/index.js";
 
 export async function analyzeMediaUrl(url: string) {
   const normalizedUrl = url.trim();
