@@ -3,6 +3,7 @@ import { randomUUID } from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { promisify } from "node:util";
+import { getSocket } from "../socket.js";
 
 const execFileAsync = promisify(execFile);
 

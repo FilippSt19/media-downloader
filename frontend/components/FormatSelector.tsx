@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useDownloadProgress } from "@/hooks/useDownloadProgress";
 
 const API_URL =
   process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
@@ -36,6 +37,7 @@ export default function FormatSelector({
   );
   const [isDownloading, setIsDownloading] = useState(false);
   const [error, setError] = useState("");
+  const { progress, status } = useDownloadProgress();
 
   const selectVideo = () => {
     setMediaType("video");
@@ -190,6 +192,23 @@ export default function FormatSelector({
       {error && (
         <div className="mt-3 rounded-lg bg-red-500/20 px-4 py-3 text-sm text-red-400 border border-red-500/30">
           {error}
+        </div>
+      )}
+
+      {progress > 0 && (
+        <div className="mt-4">
+          <div className="h-2 overflow-hidden rounded-full bg-zinc-800">
+            <div
+              className="h-full bg-green-500 transition-all"
+              style={{
+                width: `${progress}%`,
+              }}
+            />
+          </div>
+
+          <p className="mt-2 text-center text-sm text-zinc-400">
+            {status}
+          </p>
         </div>
       )}
     </div>
