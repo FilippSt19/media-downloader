@@ -5,6 +5,7 @@ import helmet from "helmet";
 import http from "http";
 import mediaRoutes from "./routes/mediaRoutes.js";
 import { initializeSocket } from "./socket.js";
+import { logger } from "./logger/logger.js";
 
 dotenv.config();
 
