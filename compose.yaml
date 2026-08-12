@@ -2,7 +2,6 @@ services:
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile
 
     container_name: media-downloader-backend
 
@@ -10,7 +9,12 @@ services:
       - "4000:4000"
 
     volumes:
-      - ./backend/src:/app/src
+      - ./backend:/app
+      - /app/node_modules
+
+    working_dir: /app
+
+    command: npm run dev
 
     environment:
       PORT: 4000
