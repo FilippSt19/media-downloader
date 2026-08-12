@@ -12,6 +12,7 @@ type DownloadOptions = {
   url: string;
   type: DownloadType;
   quality: number;
+  title?: string;
 };
 
 export type DownloadResult = {
@@ -21,14 +22,26 @@ export type DownloadResult = {
 
 const TEMP_DIR = path.resolve("temp");
 
+function sanitizeFileName(value: string): string {
+  return value
+    .replace(/[<>:"/\\|?*\x00-\x1F]/g, "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 150);
+}
+
 export async function downloadMedia({
   url,
   type,
   quality,
+  title,
 }: DownloadOptions): Promise<DownloadResult> {
   await fs.mkdir(TEMP_DIR, { recursive: true });
 
   const id = randomUUID();
+
+  const safeTitle =
+    sanitizeFileName(title || "media") || "media";
 
   if (type === "audio") {
     const outputTemplate = path.join(TEMP_DIR, `${id}.%(ext)s`);
@@ -53,7 +66,7 @@ export async function downloadMedia({
 
     return {
       filePath: path.join(TEMP_DIR, `${id}.mp3`),
-      fileName: `audio-${id}.mp3`,
+      fileName: `${safeTitle}.mp3`,
     };
   }
 
@@ -78,7 +91,7 @@ export async function downloadMedia({
 
   return {
     filePath,
-    fileName: `video-${id}.mp4`,
+    fileName: `${safeTitle}.mp4`,
   };
 }
 

@@ -43,10 +43,11 @@ export async function downloadMediaFile(
   let downloadedFile: string | null = null;
 
   try {
-    const { url, type, quality } = req.body as {
+    const { url, type, quality, title } = req.body as {
       url?: string;
       type?: DownloadType;
       quality?: number;
+      title?: string;
     };
 
     if (!url || typeof url !== "string") {
