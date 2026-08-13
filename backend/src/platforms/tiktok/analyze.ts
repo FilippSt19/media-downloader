@@ -1,10 +1,7 @@
-import { AppError } from "../../errors/AppError.js";
+import { getMetadata } from "../shared/metadata.js";
 
 export async function getTikTokMetadata(
-    _url: string
+    url: string
 ) {
-    throw new AppError(
-        501,
-        "TikTok support is not implemented yet."
-    );
+    return getMetadata(url);
 }
