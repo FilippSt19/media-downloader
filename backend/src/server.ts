@@ -8,6 +8,7 @@ import { errorHandler } from "./errors/errorHandler.js";
 import { logger } from "./logger/logger.js";
 import mediaRoutes from "./routes/mediaRoutes.js";
 import { initializeSocket } from "./socket/index.js";
+import { swaggerMiddleware } from "./swagger/index.js";
 
 dotenv.config();
 
@@ -22,6 +23,8 @@ app.use(
 
 app.use(helmet());
 app.use(express.json());
+
+app.use("/docs", ...swaggerMiddleware);
 
 app.use("/api/media", mediaRoutes);
 
