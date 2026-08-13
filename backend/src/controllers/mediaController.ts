@@ -6,20 +6,14 @@ import { analyzeMediaUrl } from "../services/mediaService.js";
 import {
     downloadMedia,
     removeDownloadedFile,
-    type DownloadType,
 } from "../services/downloadService.js";
-import type { AnalyzeMediaRequest } from "../types/media.js";
 
 export async function analyzeMedia(
     req: Request,
     res: Response
 ): Promise<void> {
     try {
-        const { url } = req.body as AnalyzeMediaRequest;
-
-        if (typeof url !== "string") {
-            throw new AppError(400, "URL is required.");
-        }
+        const { url } = req.body;
 
         const result = await analyzeMediaUrl(url);
 
@@ -49,28 +43,7 @@ export async function downloadMediaFile(
     let downloadedFile: string | null = null;
 
     try {
-        const { url, type, quality, title } = req.body as {
-            url?: string;
-            type?: DownloadType;
-            quality?: number;
-            title?: string;
-        };
-
-        if (!url || typeof url !== "string") {
-            throw new AppError(400, "URL is required.");
-        }
-
-        if (type !== "video" && type !== "audio") {
-            throw new AppError(400, "Invalid download type.");
-        }
-
-        if (
-            typeof quality !== "number" ||
-            !Number.isFinite(quality) ||
-            quality <= 0
-        ) {
-            throw new AppError(400, "Invalid quality.");
-        }
+        const { url, type, quality, title } = req.body;
 
         const result = await downloadMedia({
             url,

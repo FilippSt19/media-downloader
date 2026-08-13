@@ -9,9 +9,6 @@ const downloadService_js_1 = require("../services/downloadService.js");
 async function analyzeMedia(req, res) {
     try {
         const { url } = req.body;
-        if (typeof url !== "string") {
-            throw new AppError_js_1.AppError(400, "URL is required.");
-        }
         const result = await (0, mediaService_js_1.analyzeMediaUrl)(url);
         res.status(200).json(result);
     }
@@ -34,17 +31,6 @@ async function downloadMediaFile(req, res) {
     let downloadedFile = null;
     try {
         const { url, type, quality, title } = req.body;
-        if (!url || typeof url !== "string") {
-            throw new AppError_js_1.AppError(400, "URL is required.");
-        }
-        if (type !== "video" && type !== "audio") {
-            throw new AppError_js_1.AppError(400, "Invalid download type.");
-        }
-        if (typeof quality !== "number" ||
-            !Number.isFinite(quality) ||
-            quality <= 0) {
-            throw new AppError_js_1.AppError(400, "Invalid quality.");
-        }
         const result = await (0, downloadService_js_1.downloadMedia)({
             url,
             type,

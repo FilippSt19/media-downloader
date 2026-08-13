@@ -12,6 +12,7 @@ const errorHandler_js_1 = require("./errors/errorHandler.js");
 const logger_js_1 = require("./logger/logger.js");
 const mediaRoutes_js_1 = __importDefault(require("./routes/mediaRoutes.js"));
 const index_js_1 = require("./socket/index.js");
+const index_js_2 = require("./swagger/index.js");
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const PORT = Number(process.env.PORT) || 4000;
@@ -20,6 +21,7 @@ app.use((0, cors_1.default)({
 }));
 app.use((0, helmet_1.default)());
 app.use(express_1.default.json());
+app.use("/docs", ...index_js_2.swaggerMiddleware);
 app.use("/api/media", mediaRoutes_js_1.default);
 app.get("/health", (_req, res) => {
     res.status(200).json({
