@@ -4,6 +4,7 @@ import express from "express";
 import helmet from "helmet";
 import http from "node:http";
 
+import { errorHandler } from "./errors/errorHandler.js";
 import { logger } from "./logger/logger.js";
 import mediaRoutes from "./routes/mediaRoutes.js";
 import { initializeSocket } from "./socket/index.js";
@@ -30,6 +31,8 @@ app.get("/health", (_req, res) => {
         service: "media-downloader-api",
     });
 });
+
+app.use(errorHandler);
 
 const server = http.createServer(app);
 

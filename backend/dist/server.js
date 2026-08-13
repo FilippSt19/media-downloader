@@ -8,6 +8,7 @@ const dotenv_1 = __importDefault(require("dotenv"));
 const express_1 = __importDefault(require("express"));
 const helmet_1 = __importDefault(require("helmet"));
 const node_http_1 = __importDefault(require("node:http"));
+const errorHandler_js_1 = require("./errors/errorHandler.js");
 const logger_js_1 = require("./logger/logger.js");
 const mediaRoutes_js_1 = __importDefault(require("./routes/mediaRoutes.js"));
 const index_js_1 = require("./socket/index.js");
@@ -26,6 +27,7 @@ app.get("/health", (_req, res) => {
         service: "media-downloader-api",
     });
 });
+app.use(errorHandler_js_1.errorHandler);
 const server = node_http_1.default.createServer(app);
 (0, index_js_1.initializeSocket)(server);
 server.listen(PORT, () => {

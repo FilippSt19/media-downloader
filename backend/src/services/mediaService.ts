@@ -1,4 +1,5 @@
 import { detectPlatform } from "../platforms/detector.js";
+import { AppError } from "../errors/AppError.js";
 import { getYouTubeMetadata } from "../platforms/youtube/index.js";
 
 export class MediaValidationError extends Error {
@@ -12,15 +13,13 @@ export async function analyzeMediaUrl(url: string) {
   const normalizedUrl = url.trim();
 
   if (!normalizedUrl) {
-    throw new MediaValidationError("URL is required.");
+    throw new AppError(400, "URL is required.");
   }
 
   const platform = detectPlatform(normalizedUrl);
 
   if (!platform) {
-    throw new MediaValidationError(
-      "Unsupported or invalid media URL. Include the full link (e.g. https://...)."
-    );
+    throw new AppError(400, "Unsupported or invalid media URL.");
   }
 
   if (platform === "youtube") {

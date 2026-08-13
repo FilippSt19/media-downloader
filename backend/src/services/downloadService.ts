@@ -4,6 +4,7 @@ import path from "node:path";
 
 import { spawnYtDlp } from "../utils/process.js";
 import { logger } from "../logger/logger.js";
+import { AppError } from "../errors/AppError.js";
 import {
     emitDownloadCompleted, 
     emitDownloadFailed,
@@ -96,7 +97,7 @@ export async function downloadMedia({
                 }
 
                 emitDownloadFailed("Download failed");
-                reject(new Error("Download failed"));
+                reject(new AppError(500, "Download failed."));
             });
 
             process.on("error", (error) => {
@@ -145,7 +146,7 @@ export async function downloadMedia({
             }
 
             emitDownloadFailed(`Process exited with code ${code}`);
-            reject(new Error(`Process exited with code ${code}`));
+            reject(new AppError(500, `Process exited with code ${code}.`));
         });
 
         process.on("error", (error) => {

@@ -8,16 +8,18 @@ exports.removeDownloadedFile = removeDownloadedFile;
 const node_crypto_1 = require("node:crypto");
 const promises_1 = __importDefault(require("node:fs/promises"));
 const node_path_1 = __importDefault(require("node:path"));
-const emitters_js_1 = require("../socket/emitters.js");
-const environment_js_1 = require("../config/environment.js");
 const process_js_1 = require("../utils/process.js");
+const logger_js_1 = require("../logger/logger.js");
+const AppError_js_1 = require("../errors/AppError.js");
+const emitters_js_1 = require("../socket/emitters.js");
 function parseProgress(line) {
     const match = line.match(/\[download\]\s+(\d+(?:\.\d+)?)%/);
-    if (!match)
+    if (!match) {
         return null;
+    }
     return Math.floor(Number(match[1]));
 }
-const TEMP_DIR = node_path_1.default.resolve(environment_js_1.ENV.TEMP_DIR);
+const TEMP_DIR = node_path_1.default.resolve("temp");
 function sanitizeFileName(value) {
     return value
         .replace(/[<>:"/\\|?*\x00-\x1F]/g, "")
@@ -29,6 +31,7 @@ async function downloadMedia({ url, type, quality, title, }) {
     await promises_1.default.mkdir(TEMP_DIR, { recursive: true });
     const id = (0, node_crypto_1.randomUUID)();
     const safeTitle = sanitizeFileName(title || "media") || "media";
+    (0, emitters_js_1.emitDownloadStarted)();
     if (type === "audio") {
         const outputTemplate = node_path_1.default.join(TEMP_DIR, `${id}.%(ext)s`);
         await new Promise((resolve, reject) => {
@@ -43,14 +46,14 @@ async function downloadMedia({ url, type, quality, title, }) {
                 outputTemplate,
                 url,
             ]);
-            process.stdout.on("data", (chunk) => {
+            process.stderr.on("data", (chunk) => {
                 const text = chunk.toString();
+                logger_js_1.logger.info(text.trim());
                 const progress = parseProgress(text);
                 if (progress !== null) {
-                    (0, emitters_js_1.emitDownloadProgress)(progress, "Downloading...");
+                    (0, emitters_js_1.emitDownloadProgress)(progress, "Downloading");
                 }
             });
-            process.stderr.on("data", console.error);
             process.on("close", (code) => {
                 if (code === 0) {
                     (0, emitters_js_1.emitDownloadCompleted)();
@@ -58,7 +61,11 @@ async function downloadMedia({ url, type, quality, title, }) {
                     return;
                 }
                 (0, emitters_js_1.emitDownloadFailed)("Download failed");
-                reject(new Error("Download failed"));
+                reject(new AppError_js_1.AppError(500, "Download failed."));
+            });
+            process.on("error", (error) => {
+                (0, emitters_js_1.emitDownloadFailed)(error.message);
+                reject(error);
             });
         });
         return {
@@ -68,7 +75,7 @@ async function downloadMedia({ url, type, quality, title, }) {
     }
     const filePath = node_path_1.default.join(TEMP_DIR, `${id}.mp4`);
     await new Promise((resolve, reject) => {
-        const proc = (0, process_js_1.spawnYtDlp)([
+        const process = (0, process_js_1.spawnYtDlp)([
             "--no-playlist",
             "-f",
             `bestvideo[height<=${quality}]+bestaudio/best[height<=${quality}]`,
@@ -78,13 +85,27 @@ async function downloadMedia({ url, type, quality, title, }) {
             filePath,
             url,
         ]);
-        proc.on("close", (code) => {
-            if (code === 0)
-                resolve();
-            else
-                reject(new Error(`Process exited with code ${code}`));
+        process.stderr.on("data", (chunk) => {
+            const text = chunk.toString();
+            logger_js_1.logger.info(text.trim());
+            const progress = parseProgress(text);
+            if (progress !== null) {
+                (0, emitters_js_1.emitDownloadProgress)(progress, "Downloading");
+            }
         });
-        proc.on("error", reject);
+        process.on("close", (code) => {
+            if (code === 0) {
+                (0, emitters_js_1.emitDownloadCompleted)();
+                resolve();
+                return;
+            }
+            (0, emitters_js_1.emitDownloadFailed)(`Process exited with code ${code}`);
+            reject(new AppError_js_1.AppError(500, `Process exited with code ${code}.`));
+        });
+        process.on("error", (error) => {
+            (0, emitters_js_1.emitDownloadFailed)(error.message);
+            reject(error);
+        });
     });
     return {
         filePath,

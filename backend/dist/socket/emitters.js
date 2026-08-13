@@ -6,8 +6,11 @@ exports.emitDownloadCompleted = emitDownloadCompleted;
 exports.emitDownloadFailed = emitDownloadFailed;
 const index_js_1 = require("./index.js");
 const events_js_1 = require("./events.js");
-function emitDownloadStarted() {
-    (0, index_js_1.getSocket)().emit(events_js_1.SocketEvents.DOWNLOAD_STARTED);
+function emitDownloadStarted(status = "Starting") {
+    (0, index_js_1.getSocket)().emit(events_js_1.SocketEvents.DOWNLOAD_STARTED, {
+        progress: 0,
+        status,
+    });
 }
 function emitDownloadProgress(progress, status) {
     (0, index_js_1.getSocket)().emit(events_js_1.SocketEvents.DOWNLOAD_PROGRESS, {
@@ -16,7 +19,10 @@ function emitDownloadProgress(progress, status) {
     });
 }
 function emitDownloadCompleted() {
-    (0, index_js_1.getSocket)().emit(events_js_1.SocketEvents.DOWNLOAD_COMPLETED);
+    (0, index_js_1.getSocket)().emit(events_js_1.SocketEvents.DOWNLOAD_COMPLETED, {
+        progress: 100,
+        status: "Finished",
+    });
 }
 function emitDownloadFailed(message) {
     (0, index_js_1.getSocket)().emit(events_js_1.SocketEvents.DOWNLOAD_FAILED, {
