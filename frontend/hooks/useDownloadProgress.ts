@@ -18,9 +18,18 @@ export function useDownloadProgress() {
             console.log("Socket disconnected");
         });
 
-        socket.on("download-progress", (data) => {
+        socket.on("download:progress", (data) => {
             setProgress(data.progress);
             setStatus(data.status);
+        });
+
+        socket.on("download:completed", () => {
+            setProgress(100);
+            setStatus("Finished");
+        });
+
+        socket.on("download:failed", (data) => {
+            setStatus(data.message);
         });
 
         return () => {

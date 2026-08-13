@@ -25,7 +25,7 @@ function parseProgress(line: string): number | null {
 
 type DownloadOptions = {
     url: string;
-    type: DownloadType;
+    type: DownloadType
     quality: number;
     title?: string;
 };
@@ -76,16 +76,16 @@ export async function downloadMedia({
                 url,
             ]);
 
-            process.stdout.on("data", (chunk) => {
-                const progress = parseProgress(chunk.toString());
+            process.stderr.on("data", (chunk) => {
+                const text = chunk.toString();
+
+                logger.info(text.trim());
+
+                const progress = parseProgress(text);
 
                 if (progress !== null) {
                     emitDownloadProgress(progress, "Downloading");
                 }
-            });
-
-            process.stderr.on("data", (chunk) => {
-                logger.error(chunk.toString());
             });
 
             process.on("close", (code) => {
@@ -125,8 +125,12 @@ export async function downloadMedia({
             url,
         ]);
 
-        process.stdout.on("data", (chunk) => {
-            const progress = parseProgress(chunk.toString());
+        process.stderr.on("data", (chunk) => {
+            const text = chunk.toString();
+
+            logger.info(text.trim());
+
+            const progress = parseProgress(text);
 
             if (progress !== null) {
                 emitDownloadProgress(progress, "Downloading");
