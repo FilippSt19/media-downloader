@@ -1,10 +1,20 @@
 import fs from "node:fs/promises";
-
 import { randomUUID } from "node:crypto";
 
 import { downloadAudio } from "./download/audio.js";
 import { downloadVideo } from "./download/video.js";
 import { sanitizeFileName } from "./download/file.js";
+
+let downloadQueue: Promise<void> = Promise.resolve();
+
+function enqueueDownload<T>(task: () => Promise<T>): Promise<T> {
+    const result = downloadQueue.then(task, task);
+    downloadQueue = result.then(
+        () => undefined,
+        () => undefined
+    );
+    return result;
+}
 
 export type DownloadType = "video" | "audio";
 
@@ -32,10 +42,8 @@ export async function downloadMedia({
         sanitizeFileName(title || "media") || "media";
 
     if (type === "audio") {
-        const filePath = await downloadAudio(
-            id,
-            url,
-            quality
+        const filePath = await enqueueDownload(() =>
+            downloadAudio(id, url, quality)
         );
 
         return {
@@ -44,10 +52,8 @@ export async function downloadMedia({
         };
     }
 
-    const filePath = await downloadVideo(
-        id,
-        url,
-        quality
+    const filePath = await enqueueDownload(() =>
+        downloadVideo(id, url, quality)
     );
 
     return {
