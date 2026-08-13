@@ -1,18 +1,22 @@
 import fs from "node:fs/promises";
 import { randomUUID } from "node:crypto";
 
+import { AppError } from "../errors/AppError.js";
+import { detectPlatform } from "../platforms/detector.js";
 import { downloadAudio } from "./download/audio.js";
-import { downloadVideo } from "./download/video.js";
 import { sanitizeFileName } from "./download/file.js";
+import { downloadVideo } from "./download/video.js";
 
 let downloadQueue: Promise<void> = Promise.resolve();
 
 function enqueueDownload<T>(task: () => Promise<T>): Promise<T> {
     const result = downloadQueue.then(task, task);
+
     downloadQueue = result.then(
         () => undefined,
         () => undefined
     );
+
     return result;
 }
 
@@ -36,6 +40,15 @@ export async function downloadMedia({
     quality,
     title,
 }: DownloadOptions): Promise<DownloadResult> {
+    const platform = detectPlatform(url);
+
+    if (!platform) {
+        throw new AppError(
+            400,
+            "Unsupported or invalid media URL."
+        );
+    }
+
     const id = randomUUID();
 
     const safeTitle =
@@ -53,7 +66,12 @@ export async function downloadMedia({
     }
 
     const filePath = await enqueueDownload(() =>
-        downloadVideo(id, url, quality)
+        downloadVideo(
+            id,
+            url,
+            quality,
+            platform
+        )
     );
 
     return {

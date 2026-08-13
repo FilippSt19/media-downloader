@@ -17,7 +17,8 @@ const TEMP_DIR = path.resolve("temp");
 export async function downloadVideo(
     id: string,
     url: string,
-    quality: number
+    quality: number,
+    platform: "youtube" | "instagram" | "tiktok"
 ): Promise<string> {
     await fs.mkdir(TEMP_DIR, { recursive: true });
 
@@ -25,17 +26,29 @@ export async function downloadVideo(
 
     emitDownloadStarted();
 
+    const args =
+        platform === "youtube"
+            ? [
+                  "--no-playlist",
+                  "-f",
+                  `bestvideo[height<=${quality}]+bestaudio/best[height<=${quality}]`,
+                  "--merge-output-format",
+                  "mp4",
+                  "-o",
+                  filePath,
+                  url,
+              ]
+            : [
+                  "--no-playlist",
+                  "-f",
+                  `best[height<=${quality}]/best`,
+                  "-o",
+                  filePath,
+                  url,
+              ];
+
     await new Promise<void>((resolve, reject) => {
-        const process = spawnYtDlp([
-            "--no-playlist",
-            "-f",
-            `bestvideo[height<=${quality}]+bestaudio/best[height<=${quality}]`,
-            "--merge-output-format",
-            "mp4",
-            "-o",
-            filePath,
-            url,
-        ]);
+        const process = spawnYtDlp(args);
 
         process.stderr.on("data", (chunk) => {
             const text = chunk.toString();
@@ -57,6 +70,7 @@ export async function downloadVideo(
             }
 
             emitDownloadFailed(`Process exited with code ${code}`);
+
             reject(
                 new AppError(
                     500,
