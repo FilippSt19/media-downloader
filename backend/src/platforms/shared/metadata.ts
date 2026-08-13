@@ -30,6 +30,8 @@ export async function getMetadata(
     const { stdout } = await execFileAsync(
         "yt-dlp",
         [
+            "--js-runtimes",
+            "node:/usr/bin/node",
             "--dump-single-json",
             "--skip-download",
             "--no-playlist",

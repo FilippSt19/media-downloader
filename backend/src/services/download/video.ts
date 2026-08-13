@@ -29,6 +29,8 @@ export async function downloadVideo(
     const args =
         platform === "youtube"
             ? [
+                  "--js-runtimes",
+                  "node:/usr/bin/node",
                   "--no-playlist",
                   "-f",
                   `bestvideo[height<=${quality}]+bestaudio/best[height<=${quality}]`,
@@ -48,10 +50,13 @@ export async function downloadVideo(
               ];
 
     await new Promise<void>((resolve, reject) => {
+        logger.info(args.join(" "));
         const process = spawnYtDlp(args);
 
         process.stderr.on("data", (chunk) => {
             const text = chunk.toString();
+
+            console.log(text);
 
             logger.info(text.trim());
 
