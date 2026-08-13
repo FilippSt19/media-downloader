@@ -1,6 +1,9 @@
 import type { Request, Response } from "express";
 
-import { analyzeMediaUrl } from "../services/mediaService.js";
+import {
+  analyzeMediaUrl,
+  MediaValidationError,
+} from "../services/mediaService.js";
 import type { AnalyzeMediaRequest } from "../types/media.js";
 
 import {
@@ -24,12 +27,19 @@ export async function analyzeMedia(req: Request, res: Response) {
 
     return res.status(200).json(result);
   } catch (error) {
+    if (error instanceof MediaValidationError) {
+      return res.status(400).json({
+        success: false,
+        error: error.message,
+      });
+    }
+
     const message =
       error instanceof Error
         ? error.message
         : "Unable to analyze media.";
 
-    return res.status(400).json({
+    return res.status(500).json({
       success: false,
       error: message,
     });

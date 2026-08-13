@@ -1,17 +1,26 @@
 import { detectPlatform } from "../platforms/detector.js";
 import { getYouTubeMetadata } from "../platforms/youtube/index.js";
 
+export class MediaValidationError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "MediaValidationError";
+  }
+}
+
 export async function analyzeMediaUrl(url: string) {
   const normalizedUrl = url.trim();
 
   if (!normalizedUrl) {
-    throw new Error("URL is required.");
+    throw new MediaValidationError("URL is required.");
   }
 
   const platform = detectPlatform(normalizedUrl);
 
   if (!platform) {
-    throw new Error("Unsupported or invalid media URL.");
+    throw new MediaValidationError(
+      "Unsupported or invalid media URL. Include the full link (e.g. https://...)."
+    );
   }
 
   if (platform === "youtube") {
@@ -20,6 +29,7 @@ export async function analyzeMediaUrl(url: string) {
     return {
       success: true,
       platform,
+      
       url: normalizedUrl,
       media,
     };

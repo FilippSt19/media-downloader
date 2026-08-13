@@ -5,18 +5,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.downloadMedia = downloadMedia;
 exports.removeDownloadedFile = removeDownloadedFile;
-const node_child_process_1 = require("node:child_process");
 const node_crypto_1 = require("node:crypto");
 const promises_1 = __importDefault(require("node:fs/promises"));
 const node_path_1 = __importDefault(require("node:path"));
-const socket_js_1 = require("../socket.js");
+const emitters_js_1 = require("../socket/emitters.js");
+const environment_js_1 = require("../config/environment.js");
+const process_js_1 = require("../utils/process.js");
 function parseProgress(line) {
     const match = line.match(/\[download\]\s+(\d+(?:\.\d+)?)%/);
     if (!match)
         return null;
     return Math.floor(Number(match[1]));
 }
-const TEMP_DIR = node_path_1.default.resolve("temp");
+const TEMP_DIR = node_path_1.default.resolve(environment_js_1.ENV.TEMP_DIR);
 function sanitizeFileName(value) {
     return value
         .replace(/[<>:"/\\|?*\x00-\x1F]/g, "")
@@ -31,8 +32,7 @@ async function downloadMedia({ url, type, quality, title, }) {
     if (type === "audio") {
         const outputTemplate = node_path_1.default.join(TEMP_DIR, `${id}.%(ext)s`);
         await new Promise((resolve, reject) => {
-            const io = (0, socket_js_1.getSocket)();
-            const process = (0, node_child_process_1.spawn)("yt-dlp", [
+            const process = (0, process_js_1.spawnYtDlp)([
                 "--no-playlist",
                 "-x",
                 "--audio-format",
@@ -47,22 +47,17 @@ async function downloadMedia({ url, type, quality, title, }) {
                 const text = chunk.toString();
                 const progress = parseProgress(text);
                 if (progress !== null) {
-                    io.emit("download-progress", {
-                        progress,
-                        status: "Downloading..."
-                    });
+                    (0, emitters_js_1.emitDownloadProgress)(progress, "Downloading...");
                 }
             });
             process.stderr.on("data", console.error);
             process.on("close", (code) => {
                 if (code === 0) {
-                    io.emit("download-progress", {
-                        progress: 100,
-                        status: "Finished"
-                    });
+                    (0, emitters_js_1.emitDownloadCompleted)();
                     resolve();
                     return;
                 }
+                (0, emitters_js_1.emitDownloadFailed)("Download failed");
                 reject(new Error("Download failed"));
             });
         });
@@ -73,7 +68,7 @@ async function downloadMedia({ url, type, quality, title, }) {
     }
     const filePath = node_path_1.default.join(TEMP_DIR, `${id}.mp4`);
     await new Promise((resolve, reject) => {
-        const proc = (0, node_child_process_1.spawn)("yt-dlp", [
+        const proc = (0, process_js_1.spawnYtDlp)([
             "--no-playlist",
             "-f",
             `bestvideo[height<=${quality}]+bestaudio/best[height<=${quality}]`,

@@ -17,10 +17,16 @@ async function analyzeMedia(req, res) {
         return res.status(200).json(result);
     }
     catch (error) {
+        if (error instanceof mediaService_js_1.MediaValidationError) {
+            return res.status(400).json({
+                success: false,
+                error: error.message,
+            });
+        }
         const message = error instanceof Error
             ? error.message
             : "Unable to analyze media.";
-        return res.status(400).json({
+        return res.status(500).json({
             success: false,
             error: message,
         });

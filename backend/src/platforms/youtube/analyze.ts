@@ -46,18 +46,37 @@ const AUDIO_PRESETS: AudioFormat[] = [
 export async function getYouTubeMetadata(
   url: string
 ): Promise<YouTubeMetadata> {
-  const { stdout } = await execFileAsync(
-    "yt-dlp",
-    [
-      "--dump-single-json",
-      "--skip-download",
-      "--no-playlist",
-      url,
-    ],
-    {
-      maxBuffer: 20 * 1024 * 1024,
+  let stdout: string;
+
+  try {
+    const result = await execFileAsync(
+      "yt-dlp",
+      [
+        "--dump-single-json",
+        "--skip-download",
+        "--no-playlist",
+        url,
+      ],
+      {
+        maxBuffer: 20 * 1024 * 1024,
+      }
+    );
+
+    stdout = result.stdout;
+  } catch (error) {
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      "code" in error &&
+      (error as { code?: string }).code === "ENOENT"
+    ) {
+      throw new Error(
+        "yt-dlp is not installed or not in PATH. Install it and restart the backend server."
+      );
     }
-  );
+
+    throw new Error("Failed to analyze the media URL with yt-dlp.");
+  }
 
   const data = JSON.parse(stdout) as YtDlpOutput;
 

@@ -1,19 +1,27 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.MediaValidationError = void 0;
 exports.analyzeMediaUrl = analyzeMediaUrl;
-const platformDetector_js_1 = require("../platforms/platformDetector.js");
-const youtube_js_1 = require("../platforms/youtube.js");
+const detector_js_1 = require("../platforms/detector.js");
+const index_js_1 = require("../platforms/youtube/index.js");
+class MediaValidationError extends Error {
+    constructor(message) {
+        super(message);
+        this.name = "MediaValidationError";
+    }
+}
+exports.MediaValidationError = MediaValidationError;
 async function analyzeMediaUrl(url) {
     const normalizedUrl = url.trim();
     if (!normalizedUrl) {
-        throw new Error("URL is required.");
+        throw new MediaValidationError("URL is required.");
     }
-    const platform = (0, platformDetector_js_1.detectPlatform)(normalizedUrl);
+    const platform = (0, detector_js_1.detectPlatform)(normalizedUrl);
     if (!platform) {
-        throw new Error("Unsupported or invalid media URL.");
+        throw new MediaValidationError("Unsupported or invalid media URL. Include the full link (e.g. https://...).");
     }
     if (platform === "youtube") {
-        const media = await (0, youtube_js_1.getYouTubeMetadata)(normalizedUrl);
+        const media = await (0, index_js_1.getYouTubeMetadata)(normalizedUrl);
         return {
             success: true,
             platform,
