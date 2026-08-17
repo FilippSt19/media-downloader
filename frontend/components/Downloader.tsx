@@ -36,6 +36,12 @@ export default function Downloader() {
   const [result, setResult] = useState<AnalyzeResult | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  const handleReset = () => {
+    setUrl("");
+    setResult(null);
+    setError(null);
+  };
+
   const handleAnalyze = async () => {
     if (!url.trim()) {
       return;
@@ -102,6 +108,7 @@ export default function Downloader() {
           url={url}
           onUrlChange={setUrl}
           onAnalyze={handleAnalyze}
+          onReset={handleReset}
           isLoading={isLoading}
         />
       </div>
