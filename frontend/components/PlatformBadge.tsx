@@ -7,7 +7,7 @@ type PlatformBadgeProps = {
 const PLATFORM_ICONS = {
   YouTube: "/icons/youtube.png",
   Instagram: "/icons/instagram.svg",
-  TikTok: "/icons/tiktok.svg",
+  TikTok: "/icons/tiktok.png",
 };
 
 export default function PlatformBadge({

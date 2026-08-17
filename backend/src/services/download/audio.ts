@@ -58,7 +58,12 @@ export async function downloadAudio(
             }
 
             emitDownloadFailed("Download failed");
-            reject(new AppError(500, "Download failed."));
+            reject(
+                new AppError(
+                    500,
+                    `Download failed (exit code ${code}).`
+                )
+            );
         });
 
         process.on("error", (error) => {

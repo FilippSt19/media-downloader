@@ -145,37 +145,41 @@ export default function FormatSelector({
       </div>
 
       <div className="mt-5">
-        <label
-          htmlFor="quality"
-          className="mb-2 block text-sm font-medium text-zinc-400"
-        >
+        <p className="mb-3 text-sm font-medium text-zinc-400">
           Quality
-        </label>
+        </p>
 
-        <select
-          id="quality"
-          value={quality}
-          onChange={(event) => setQuality(event.target.value)}
-          className="w-full rounded-xl border border-white/10 bg-zinc-900 px-4 py-3 text-white outline-none focus:border-white/30"
-        >
+        <div className="flex flex-wrap gap-2">
           {mediaType === "video"
             ? videoFormats.map((format) => (
-                <option
+                <button
                   key={format.height}
-                  value={format.height}
+                  type="button"
+                  onClick={() => setQuality(format.height.toString())}
+                  className={`rounded-xl border px-4 py-2 text-sm font-medium transition ${
+                    quality === format.height.toString()
+                      ? "border-white bg-white text-black"
+                      : "border-white/10 bg-zinc-900 text-zinc-300 hover:border-white/30"
+                  }`}
                 >
                   {format.quality}
-                </option>
+                </button>
               ))
             : audioFormats.map((format) => (
-                <option
+                <button
                   key={format.bitrate}
-                  value={format.bitrate}
+                  type="button"
+                  onClick={() => setQuality(format.bitrate.toString())}
+                  className={`rounded-xl border px-4 py-2 text-sm font-medium transition ${
+                    quality === format.bitrate.toString()
+                      ? "border-white bg-white text-black"
+                      : "border-white/10 bg-zinc-900 text-zinc-300 hover:border-white/30"
+                  }`}
                 >
                   {format.quality}
-                </option>
+                </button>
               ))}
-        </select>
+        </div>
       </div>
 
       <button
@@ -194,19 +198,31 @@ export default function FormatSelector({
       )}
 
       {progress > 0 && (
-        <div className="mt-4">
+        <div className="mt-5 rounded-xl border border-white/10 bg-white/5 p-4">
+          <div className="mb-2 flex items-center justify-between">
+            <span className="text-sm font-medium text-zinc-300">
+              {status}
+            </span>
+
+            <span className="text-sm font-semibold text-white">
+              {progress}%
+            </span>
+          </div>
+
           <div className="h-2 overflow-hidden rounded-full bg-zinc-800">
             <div
-              className="h-full bg-green-500 transition-all"
+              className="h-full rounded-full bg-white transition-all duration-300"
               style={{
                 width: `${progress}%`,
               }}
             />
           </div>
 
-          <p className="mt-2 text-center text-sm text-zinc-400">
-            {status}
-          </p>
+          {progress === 100 && (
+            <p className="mt-3 text-center text-sm font-medium text-green-400">
+              ✓ Download completed
+            </p>
+          )}
         </div>
       )}
     </div>
