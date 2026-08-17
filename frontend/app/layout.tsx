@@ -18,6 +18,14 @@ export const metadata: Metadata = {
   title: "Media Downloader",
   description:
     "Download media from YouTube, Instagram and TikTok.",
+  icons: {
+    icon: {
+      url: "/media-logo-outline.svg",
+      type: "image/svg+xml",
+    },
+    shortcut: "/media-logo-outline.svg",
+    apple: "/media-logo-outline.svg",
+  },
 };
 
 export default function RootLayout({

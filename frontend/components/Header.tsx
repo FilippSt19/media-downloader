@@ -1,11 +1,17 @@
+import Image from "next/image";
+
 export default function Header() {
   return (
     <header className="border-b border-white/10">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
         <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white font-bold text-black">
-            M
-          </div>
+          <Image
+            src="/media_logo.svg"
+            alt="Media Downloader logo"
+            width={36}
+            height={36}
+            className="h-9 w-9 rounded-xl"
+          />
 
           <span className="text-lg font-semibold">
             Media Downloader

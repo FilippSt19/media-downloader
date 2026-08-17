@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="Media play logo">
+  <defs>
+    <linearGradient id="motionGradient" x1="0%" y1="50%" x2="100%" y2="50%">
+      <stop offset="0%" stop-color="#43D7FF"/>
+      <stop offset="52%" stop-color="#6278FF"/>
+      <stop offset="100%" stop-color="#8C3CFF"/>
+    </linearGradient>
+    <linearGradient id="playGradient" x1="15%" y1="5%" x2="85%" y2="95%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="58%" stop-color="#F7F7FF"/>
+      <stop offset="100%" stop-color="#DDE2FF"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Transparent background -->
+  <g>
+    <!-- Motion bars -->
+    <rect x="95" y="190" width="245" height="44" rx="22" fill="url(#motionGradient)"/>
+    <rect x="160" y="278" width="180" height="44" rx="22" fill="url(#motionGradient)"/>
+    <rect x="230" y="366" width="110" height="44" rx="22" fill="url(#motionGradient)"/>
+
+    <!-- Play symbol -->
+    <path d="M390 123
+             C390 92 424 73 451 91
+             L681 246
+             C710 266 710 309 681 329
+             L451 484
+             C424 502 390 483 390 452
+             Z"
+          fill="url(#playGradient)"
+          stroke="#F7F8FF"
+          stroke-width="4"
+          stroke-linejoin="round"/>
+  </g>
+</svg>
