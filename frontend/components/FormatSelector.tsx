@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { API } from "@/config/api";
 import { useDownloadProgress } from "@/hooks/useDownloadProgress";
+import { toast } from "sonner";
 
 type VideoFormat = {
   quality: string;
@@ -54,7 +55,9 @@ export default function FormatSelector({
 
   const handleDownload = async () => {
     setError("");
+    toast.dismiss();
     setIsDownloading(true);
+    toast.info("Download started");
     try {
       console.log({
         url,
@@ -104,13 +107,14 @@ export default function FormatSelector({
       anchor.click();
       URL.revokeObjectURL(anchor.href);
 
-      console.log("Download started");
+      toast.success("Download completed");
     } catch (error) {
-      setError(
+      const message =
         error instanceof Error
           ? error.message
-          : "Unable to download media."
-      );
+          : "Unable to download media.";
+      setError(message);
+      toast.error(message);
     } finally {
       setIsDownloading(false);
     }
@@ -190,12 +194,6 @@ export default function FormatSelector({
       >
         {isDownloading ? "Downloading..." : `Download ${mediaType === "video" ? "MP4" : "MP3"}`}
       </button>
-
-      {error && (
-        <div className="mt-3 rounded-lg bg-red-500/20 px-4 py-3 text-sm text-red-400 border border-red-500/30">
-          {error}
-        </div>
-      )}
 
       {progress > 0 && (
         <div className="mt-5 rounded-xl border border-white/10 bg-white/5 p-4">

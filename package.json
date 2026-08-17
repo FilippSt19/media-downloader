@@ -10,5 +10,8 @@
   },
   "devDependencies": {
     "concurrently": "^9.0.1"
+  },
+  "dependencies": {
+    "sooner": "^1.1.4"
   }
 }
