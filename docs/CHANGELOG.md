@@ -1,13 +1,18 @@
 # Changelog
 
-## v0.1.0
+## v1.0.0
 
 ### Added
 
-- Frontend
-- Backend
-- Docker
-- Metadata extraction
+- YouTube support
+- Instagram support
+- TikTok support
 - MP3 downloads
 - MP4 downloads
-- GitHub Actions
+- Download queue
+- Socket.IO progress
+- Swagger documentation
+- Docker support
+- Zod validation
+- Logger
+- Modern UI
