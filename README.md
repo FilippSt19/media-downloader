@@ -1,41 +1,48 @@
 # Media Downloader
 
-![CI](https://github.com/<username>/media-downloader/actions/workflows/ci.yml/badge.svg)
+A modern full-stack media downloader built with **Next.js**, **Express**, **TypeScript**, **Docker**, **Socket.IO**, **yt-dlp**, and **FFmpeg**.
 
-A modern full-stack media downloader built with **Next.js**, **Express**, **TypeScript**, **Docker**, **yt-dlp**, and **FFmpeg**.
-
-The application allows users to analyze supported media URLs, preview metadata, and download content in different formats (MP3 / MP4).
+The application allows users to analyze media from multiple platforms, preview metadata, choose the preferred download format and quality, and download content directly from the browser.
 
 ---
 
 ## Features
 
+### Supported Platforms
+
+- YouTube
+- Instagram
+- TikTok
+
 ### Current
 
-* YouTube URL analysis
-* Video metadata extraction
-* Thumbnail preview
-* Video duration
-* Channel information
-* MP3 download
-* MP4 download
-* Multiple quality selection
-* Dockerized backend
-* REST API
-* Responsive interface
-* GitHub Actions CI
+- Media URL analysis
+- Video metadata extraction
+- Thumbnail preview
+- Video duration
+- Channel / Author information
+- MP3 download
+- MP4 download
+- Multiple quality selection
+- Download progress (Socket.IO)
+- Download queue
+- Responsive interface
+- Application branding
+- Toast notifications
+- Request validation (Zod)
+- Swagger API documentation
+- Centralized logging
+- Dockerized backend
 
 ### Planned
 
-* Instagram support
-* TikTok support
-* Download history
-* Download queue
-* Download progress
-* Authentication
-* API documentation (Swagger)
-* Unit tests
-* Integration tests
+- YouTube playlists
+- Download history
+- Download settings
+- Progressive Web App (PWA)
+- Desktop application
+- Unit tests
+- Integration tests
 
 ---
 
@@ -47,27 +54,36 @@ media-downloader/
 ├── frontend/
 │   ├── app/
 │   ├── components/
+│   ├── config/
+│   ├── hooks/
 │   ├── public/
 │   ├── package.json
 │   └── ...
 │
 ├── backend/
 │   ├── src/
+│   │   ├── config/
 │   │   ├── controllers/
+│   │   ├── download/
+│   │   ├── errors/
+│   │   ├── logger/
 │   │   ├── middleware/
 │   │   ├── platforms/
+│   │   │   ├── shared/
+│   │   │   ├── youtube/
+│   │   │   ├── instagram/
+│   │   │   └── tiktok/
 │   │   ├── routes/
 │   │   ├── services/
+│   │   ├── socket/
 │   │   ├── types/
 │   │   ├── utils/
+│   │   ├── validation/
 │   │   └── server.ts
 │   │
+│   ├── Dockerfile
 │   ├── package.json
-│   └── Dockerfile
-│
-├── .github/
-│   └── workflows/
-│       └── ci.yml
+│   └── ...
 │
 ├── compose.yaml
 └── README.md
@@ -79,35 +95,43 @@ media-downloader/
 
 ## Frontend
 
-* Next.js 16
-* React
-* TypeScript
-* Tailwind CSS
+- Next.js 16
+- React
+- TypeScript
+- Tailwind CSS
 
 ## Backend
 
-* Node.js
-* Express
-* TypeScript
+- Node.js
+- Express
+- TypeScript
+- Socket.IO
 
 ## Media Processing
 
-* yt-dlp
-* FFmpeg
+- yt-dlp
+- FFmpeg
+
+## Validation
+
+- Zod
+
+## Documentation
+
+- Swagger
 
 ## DevOps
 
-* Docker
-* Rancher Desktop
-* GitHub Actions
+- Docker
+- Rancher Desktop
 
 ---
 
 # Requirements
 
-* Node.js 22+
-* Docker / Rancher Desktop
-* Git
+- Node.js 22+
+- Docker / Rancher Desktop
+- Git
 
 ---
 
@@ -133,7 +157,7 @@ npm install
 npm run dev
 ```
 
-Application:
+Application
 
 ```text
 http://localhost:3000
@@ -151,10 +175,16 @@ npm install
 npm run dev
 ```
 
-API:
+API
 
 ```text
 http://localhost:4000
+```
+
+Swagger
+
+```text
+http://localhost:4000/docs
 ```
 
 ---
@@ -191,7 +221,7 @@ docker compose down
 
 ## Health
 
-```
+```http
 GET /health
 ```
 
@@ -206,9 +236,9 @@ Response
 
 ---
 
-## Analyze media
+## Analyze Media
 
-```
+```http
 POST /api/media/analyze
 ```
 
@@ -241,13 +271,23 @@ Response
 
 ---
 
-## Download media
+## Download Media
 
-```
+```http
 POST /api/media/download
 ```
 
-Request
+Video
+
+```json
+{
+  "url": "https://youtu.be/example",
+  "type": "video",
+  "quality": 1080
+}
+```
+
+Audio
 
 ```json
 {
@@ -257,27 +297,30 @@ Request
 }
 ```
 
-or
-
-```json
-{
-  "url": "https://youtu.be/example",
-  "type": "video",
-  "quality": 720
-}
-```
-
 ---
 
-# Development Workflow
+# Architecture
 
-1. Create a new branch
-2. Implement the feature
-3. Run local checks
-4. Commit changes
-5. Push branch
-6. Open Pull Request
-7. Merge into `main`
+```
+Next.js
+      │
+      ▼
+ REST API
+      │
+      ▼
+Express
+      │
+      ├──────────────► Socket.IO
+      │                     │
+      ▼                     ▼
+ Platform Services     Download Progress
+      │
+      ▼
+yt-dlp
+      │
+      ▼
+FFmpeg
+```
 
 ---
 
@@ -287,8 +330,8 @@ or
 
 ```bash
 npm run dev
-npm run lint
 npm run build
+npm run lint
 ```
 
 ## Backend
@@ -300,31 +343,27 @@ npm run build
 
 ---
 
-# Continuous Integration
-
-Every push and pull request triggers GitHub Actions.
-
-Current pipeline:
-
-* Frontend lint
-* Frontend build
-* Backend build
-
----
-
 # Roadmap
 
-* YouTube improvements
-* Instagram integration
-* TikTok integration
-* Download progress
-* Download history
-* Download queue
-* Authentication
-* API documentation
-* Unit testing
-* Integration testing
-* Production deployment
+## Version 1.1
+
+- YouTube playlists
+- Download history
+- Download settings
+- Mobile improvements
+
+## Version 1.2
+
+- Progressive Web App
+- Desktop application
+- Batch downloads
+- Retry downloads
+
+## Version 2.0
+
+- User accounts
+- Cloud synchronization
+- Production deployment
 
 ---
 
@@ -332,4 +371,4 @@ Current pipeline:
 
 This project is intended for educational and portfolio purposes.
 
-Please ensure you have the right to download any media you use with the application and comply with the terms of service and applicable copyright laws.
+Users are responsible for ensuring they have the right to download any media and for complying with the terms of service of the supported platforms and applicable copyright laws.
