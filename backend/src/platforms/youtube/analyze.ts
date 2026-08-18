@@ -2,6 +2,6 @@ import { getMetadata } from "../shared/metadata.js";
 
 export async function getYouTubeMetadata(
     url: string
-) {
-    return getMetadata(url);
+): Promise<ReturnType<typeof getMetadata>> {
+    return getMetadata(url, "youtube");
 }

@@ -56,7 +56,12 @@ export async function downloadMedia({
 
     if (type === "audio") {
         const filePath = await enqueueDownload(() =>
-            downloadAudio(id, url, quality)
+            downloadAudio(
+                id,
+                url,
+                quality,
+                platform
+            )
         );
 
         return {

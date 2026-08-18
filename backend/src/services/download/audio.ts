@@ -9,6 +9,7 @@ import {
     emitDownloadProgress,
     emitDownloadStarted,
 } from "../../socket/emitters.js";
+import { buildAudioArgs } from "../../platforms/shared/ytDlpArgs.js";
 import { spawnYtDlp } from "../../utils/process.js";
 import { parseProgress } from "./progress.js";
 
@@ -17,26 +18,29 @@ const TEMP_DIR = path.resolve("temp");
 export async function downloadAudio(
     id: string,
     url: string,
-    quality: number
+    quality: number,
+    platform: "youtube" | "instagram" | "tiktok"
 ): Promise<string> {
     await fs.mkdir(TEMP_DIR, { recursive: true });
 
-    const outputTemplate = path.join(TEMP_DIR, `${id}.%(ext)s`);
+    const outputTemplate = path.join(
+        TEMP_DIR,
+        `${id}.%(ext)s`
+    );
 
     emitDownloadStarted();
 
+    const args = await buildAudioArgs(
+        url,
+        outputTemplate,
+        quality,
+        platform
+    );
+
     await new Promise<void>((resolve, reject) => {
-        const process = spawnYtDlp([
-            "--no-playlist",
-            "-x",
-            "--audio-format",
-            "mp3",
-            "--audio-quality",
-            `${quality}K`,
-            "-o",
-            outputTemplate,
-            url,
-        ]);
+        logger.info(args.join(" "));
+
+        const process = spawnYtDlp(args);
 
         process.stderr.on("data", (chunk) => {
             const text = chunk.toString();
@@ -46,7 +50,10 @@ export async function downloadAudio(
             const progress = parseProgress(text);
 
             if (progress !== null) {
-                emitDownloadProgress(progress, "Downloading");
+                emitDownloadProgress(
+                    progress,
+                    "Downloading"
+                );
             }
         });
 
@@ -57,11 +64,14 @@ export async function downloadAudio(
                 return;
             }
 
-            emitDownloadFailed("Download failed");
+            emitDownloadFailed(
+                `Process exited with code ${code}`
+            );
+
             reject(
                 new AppError(
                     500,
-                    `Download failed (exit code ${code}).`
+                    `Process exited with code ${code}.`
                 )
             );
         });

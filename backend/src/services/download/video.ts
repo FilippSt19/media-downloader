@@ -9,6 +9,7 @@ import {
     emitDownloadProgress,
     emitDownloadStarted,
 } from "../../socket/emitters.js";
+import { buildVideoArgs } from "../../platforms/shared/ytDlpArgs.js";
 import { spawnYtDlp } from "../../utils/process.js";
 import { parseProgress } from "./progress.js";
 
@@ -26,44 +27,30 @@ export async function downloadVideo(
 
     emitDownloadStarted();
 
-    const args =
-        platform === "youtube"
-            ? [
-                  "--js-runtimes",
-                  "node:/usr/bin/node",
-                  "--no-playlist",
-                  "-f",
-                  `bestvideo[height<=${quality}]+bestaudio/best[height<=${quality}]`,
-                  "--merge-output-format",
-                  "mp4",
-                  "-o",
-                  filePath,
-                  url,
-              ]
-            : [
-                  "--no-playlist",
-                  "-f",
-                  `best[height<=${quality}]/best`,
-                  "-o",
-                  filePath,
-                  url,
-              ];
+    const args = await buildVideoArgs(
+        url,
+        filePath,
+        quality,
+        platform
+    );
 
     await new Promise<void>((resolve, reject) => {
         logger.info(args.join(" "));
+
         const process = spawnYtDlp(args);
 
         process.stderr.on("data", (chunk) => {
             const text = chunk.toString();
-
-            console.log(text);
 
             logger.info(text.trim());
 
             const progress = parseProgress(text);
 
             if (progress !== null) {
-                emitDownloadProgress(progress, "Downloading");
+                emitDownloadProgress(
+                    progress,
+                    "Downloading"
+                );
             }
         });
 
@@ -74,7 +61,9 @@ export async function downloadVideo(
                 return;
             }
 
-            emitDownloadFailed(`Process exited with code ${code}`);
+            emitDownloadFailed(
+                `Process exited with code ${code}`
+            );
 
             reject(
                 new AppError(

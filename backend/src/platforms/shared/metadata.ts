@@ -1,6 +1,9 @@
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 
+import { ENV } from "../../config/environment.js";
+import { buildMetadataArgs } from "./ytDlpArgs.js";
+
 import type {
     AudioFormat,
     MediaMetadata,
@@ -25,54 +28,57 @@ const AUDIO_PRESETS: AudioFormat[] = [
 ];
 
 export async function getMetadata(
-    url: string
+    url: string,
+    platform: "youtube" | "instagram" | "tiktok"
 ): Promise<MediaMetadata> {
-    const cookieArgs = await getYouTubeCookiesArgs();
-
-    const { stdout } = await execFileAsync(
-        "yt-dlp",
-        [
-            ...cookieArgs,
-            "--dump-single-json",
-            "--skip-download",
-            "--no-playlist",
-            url,
-        ],
-        {
-            maxBuffer: 20 * 1024 * 1024,
-        }
+    const args = await buildMetadataArgs(
+        url,
+        platform
     );
 
-    const data = JSON.parse(stdout) as YtDlpOutput;
+    try {
+        const { stdout } = await execFileAsync(
+            ENV.YT_DLP_PATH,
+            args,
+            {
+                maxBuffer: 20 * 1024 * 1024,
+            }
+        );
 
-    const heights = new Set<number>();
+        const data = JSON.parse(stdout) as YtDlpOutput;
 
-    for (const format of data.formats ?? []) {
-        if (
-            typeof format.height === "number" &&
-            format.vcodec &&
-            format.vcodec !== "none"
-        ) {
-            heights.add(format.height);
+        const heights = new Set<number>();
+
+        for (const format of data.formats ?? []) {
+            if (
+                typeof format.height === "number" &&
+                format.vcodec &&
+                format.vcodec !== "none"
+            ) {
+                heights.add(format.height);
+            }
         }
+
+        const videoFormats = Array.from(heights)
+            .sort((a, b) => b - a)
+            .map((height) => ({
+                quality: `${height}p`,
+                height,
+            }));
+
+        return {
+            title: data.title ?? "Unknown title",
+            thumbnail: data.thumbnail ?? null,
+            duration: data.duration ?? null,
+            uploader: data.uploader ?? null,
+
+            formats: {
+                video: videoFormats,
+                audio: AUDIO_PRESETS,
+            },
+        };
+    } catch (error) {
+        console.error(error);
+        throw error;
     }
-
-    const videoFormats = Array.from(heights)
-        .sort((a, b) => b - a)
-        .map((height) => ({
-            quality: `${height}p`,
-            height,
-        }));
-
-    return {
-        title: data.title ?? "Unknown title",
-        thumbnail: data.thumbnail ?? null,
-        duration: data.duration ?? null,
-        uploader: data.uploader ?? null,
-
-        formats: {
-            video: videoFormats,
-            audio: AUDIO_PRESETS,
-        },
-    };
 }
