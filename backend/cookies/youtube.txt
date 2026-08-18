@@ -1,0 +1,8 @@
+const args = [
+  "--cookies",
+  "cookies/youtube.txt",
+  "--dump-single-json",
+  "--skip-download",
+  "--no-playlist",
+  url,
+];
