@@ -1,3 +1,5 @@
+import path from "node:path";
+
 export const ENV = {
   PORT: Number(process.env.PORT) || 4000,
 
@@ -5,9 +7,7 @@ export const ENV = {
 
   YT_DLP_PATH: process.env.YT_DLP_PATH ?? "yt-dlp",
 
-  JS_RUNTIME:
-    process.env.JS_RUNTIME ??
-    (process.platform === "win32"
-      ? "node"
-      : "node:/usr/bin/node"),
+  YOUTUBE_COOKIES_PATH:
+    process.env.YOUTUBE_COOKIES_PATH ??
+    path.resolve("cookies", "youtube.txt"),
 };
