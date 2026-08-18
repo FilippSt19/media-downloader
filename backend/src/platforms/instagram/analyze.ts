@@ -3,5 +3,8 @@ import { getMetadata } from "../shared/metadata.js";
 export async function getInstagramMetadata(
     url: string
 ) {
-    return getMetadata(url);
+    return getMetadata(
+        url,
+        "instagram"
+    );
 }

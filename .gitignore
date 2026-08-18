@@ -22,3 +22,9 @@ Thumbs.db
 
 temp/
 backend/temp/
+
+# YouTube cookies
+backend/cookies/youtube.txt
+
+backend/cookies/*
+!backend/cookies/.gitkeep

@@ -42,6 +42,11 @@ export async function downloadAudio(
 
         const process = spawnYtDlp(args);
 
+        process.stdout.on("data", (chunk) => {
+            const text = chunk.toString();
+            logger.info(`[stdout] ${text.trim()}`);
+        });
+
         process.stderr.on("data", (chunk) => {
             const text = chunk.toString();
 
@@ -58,6 +63,8 @@ export async function downloadAudio(
         });
 
         process.on("close", (code) => {
+            logger.info(`yt-dlp exited with code ${code}`);
+
             if (code === 0) {
                 emitDownloadCompleted();
                 resolve();

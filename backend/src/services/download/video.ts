@@ -39,6 +39,11 @@ export async function downloadVideo(
 
         const process = spawnYtDlp(args);
 
+        process.stdout.on("data", (chunk) => {
+            const text = chunk.toString();
+            logger.info(`[stdout] ${text.trim()}`);
+        });
+
         process.stderr.on("data", (chunk) => {
             const text = chunk.toString();
 
@@ -55,6 +60,8 @@ export async function downloadVideo(
         });
 
         process.on("close", (code) => {
+            logger.info(`yt-dlp exited with code ${code}`);
+
             if (code === 0) {
                 emitDownloadCompleted();
                 resolve();

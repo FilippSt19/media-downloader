@@ -9,9 +9,7 @@ export async function buildMetadataArgs(
     if (platform === "youtube") {
         args.push(
             "--js-runtimes",
-            process.platform === "win32"
-                ? "node"
-                : "node:/usr/bin/node"
+            "node"
         );
 
         args.push(
@@ -40,9 +38,7 @@ export async function buildVideoArgs(
     if (platform === "youtube") {
         args.push(
             "--js-runtimes",
-            process.platform === "win32"
-                ? "node"
-                : "node:/usr/bin/node"
+            "node"
         );
 
         args.push(
@@ -84,9 +80,7 @@ export async function buildAudioArgs(
     if (platform === "youtube") {
         args.push(
             "--js-runtimes",
-            process.platform === "win32"
-                ? "node"
-                : "node:/usr/bin/node"
+            "node"
         );
 
         args.push(...await getYouTubeCookiesArgs());
