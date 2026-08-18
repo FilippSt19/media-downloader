@@ -27,11 +27,12 @@ const AUDIO_PRESETS: AudioFormat[] = [
 export async function getMetadata(
     url: string
 ): Promise<MediaMetadata> {
+    const cookieArgs = await getYouTubeCookiesArgs();
+
     const { stdout } = await execFileAsync(
         "yt-dlp",
         [
-            "--js-runtimes",
-            "node:/usr/bin/node",
+            ...cookieArgs,
             "--dump-single-json",
             "--skip-download",
             "--no-playlist",
