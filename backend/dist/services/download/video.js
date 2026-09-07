@@ -9,33 +9,29 @@ const node_path_1 = __importDefault(require("node:path"));
 const AppError_js_1 = require("../../errors/AppError.js");
 const logger_js_1 = require("../../logger/logger.js");
 const emitters_js_1 = require("../../socket/emitters.js");
+const ytDlpArgs_js_1 = require("../../platforms/shared/ytDlpArgs.js");
 const process_js_1 = require("../../utils/process.js");
 const progress_js_1 = require("./progress.js");
 const TEMP_DIR = node_path_1.default.resolve("temp");
-async function downloadVideo(id, url, quality) {
+async function downloadVideo(id, url, quality, platform) {
     await promises_1.default.mkdir(TEMP_DIR, { recursive: true });
     const filePath = node_path_1.default.join(TEMP_DIR, `${id}.mp4`);
     (0, emitters_js_1.emitDownloadStarted)();
+    const args = await (0, ytDlpArgs_js_1.buildVideoArgs)(url, filePath, quality, platform);
     await new Promise((resolve, reject) => {
-        const process = (0, process_js_1.spawnYtDlp)([
-            "--no-playlist",
-            "-f",
-            `bestvideo[height<=${quality}]+bestaudio/best[height<=${quality}]`,
-            "--merge-output-format",
-            "mp4",
-            "-o",
-            filePath,
-            url,
-        ]);
+        const process = (0, process_js_1.spawnYtDlp)(args);
+        process.stdout.on("data", (chunk) => {
+            const text = chunk.toString();
+        });
         process.stderr.on("data", (chunk) => {
             const text = chunk.toString();
-            logger_js_1.logger.info(text.trim());
             const progress = (0, progress_js_1.parseProgress)(text);
             if (progress !== null) {
                 (0, emitters_js_1.emitDownloadProgress)(progress, "Downloading");
             }
         });
         process.on("close", (code) => {
+            logger_js_1.logger.info(`yt-dlp exited with code ${code}`);
             if (code === 0) {
                 (0, emitters_js_1.emitDownloadCompleted)();
                 resolve();

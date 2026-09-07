@@ -16,8 +16,21 @@ const index_js_2 = require("./swagger/index.js");
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const PORT = Number(process.env.PORT) || 4000;
+const allowedOrigins = [
+    "http://localhost:3000",
+    process.env.FRONTEND_URL,
+].filter(Boolean);
 app.use((0, cors_1.default)({
-    origin: "http://localhost:3000",
+    origin(origin, callback) {
+        if (!origin) {
+            return callback(null, true);
+        }
+        if (allowedOrigins.includes(origin)) {
+            return callback(null, true);
+        }
+        return callback(new Error("Not allowed by CORS"));
+    },
+    credentials: true,
 }));
 app.use((0, helmet_1.default)());
 app.use(express_1.default.json());

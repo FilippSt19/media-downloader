@@ -35,19 +35,14 @@ export async function downloadVideo(
     );
 
     await new Promise<void>((resolve, reject) => {
-        logger.info(args.join(" "));
-
         const process = spawnYtDlp(args);
 
         process.stdout.on("data", (chunk) => {
             const text = chunk.toString();
-            logger.info(`[stdout] ${text.trim()}`);
         });
 
         process.stderr.on("data", (chunk) => {
             const text = chunk.toString();
-
-            logger.info(text.trim());
 
             const progress = parseProgress(text);
 
