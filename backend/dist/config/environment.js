@@ -11,4 +11,6 @@ exports.ENV = {
     YT_DLP_PATH: process.env.YT_DLP_PATH ?? "yt-dlp",
     YOUTUBE_COOKIES_PATH: process.env.YOUTUBE_COOKIES_PATH ??
         node_path_1.default.resolve("cookies", "youtube.txt"),
+    INSTAGRAM_COOKIES_PATH: process.env.INSTAGRAM_COOKIES_PATH ??
+        node_path_1.default.resolve("cookies", "instagram.txt"),
 };

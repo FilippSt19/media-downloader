@@ -1,4 +1,7 @@
-import { getYouTubeCookiesArgs } from "./cookies.js";
+import {
+    getInstagramCookiesArgs,
+    getYouTubeCookiesArgs,
+} from "./cookies.js";
 
 export async function buildMetadataArgs(
     url: string,
@@ -14,6 +17,12 @@ export async function buildMetadataArgs(
 
         args.push(
             ...await getYouTubeCookiesArgs()
+        );
+    }
+
+    if (platform === "instagram") {
+        args.push(
+            ...await getInstagramCookiesArgs()
         );
     }
 
@@ -53,6 +62,12 @@ export async function buildVideoArgs(
             "mp4"
         );
     } else {
+        if (platform === "instagram") {
+            args.push(
+                ...await getInstagramCookiesArgs()
+            );
+        }
+
         args.push(
             "--no-playlist",
             "-f",
@@ -84,6 +99,12 @@ export async function buildAudioArgs(
         );
 
         args.push(...await getYouTubeCookiesArgs());
+    }
+
+    if (platform === "instagram") {
+        args.push(
+            ...await getInstagramCookiesArgs()
+        );
     }
 
     args.push(

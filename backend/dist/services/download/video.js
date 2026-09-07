@@ -20,9 +20,6 @@ async function downloadVideo(id, url, quality, platform) {
     const args = await (0, ytDlpArgs_js_1.buildVideoArgs)(url, filePath, quality, platform);
     await new Promise((resolve, reject) => {
         const process = (0, process_js_1.spawnYtDlp)(args);
-        process.stdout.on("data", (chunk) => {
-            const text = chunk.toString();
-        });
         process.stderr.on("data", (chunk) => {
             const text = chunk.toString();
             const progress = (0, progress_js_1.parseProgress)(text);

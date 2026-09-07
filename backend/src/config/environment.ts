@@ -10,4 +10,8 @@ export const ENV = {
   YOUTUBE_COOKIES_PATH:
     process.env.YOUTUBE_COOKIES_PATH ??
     path.resolve("cookies", "youtube.txt"),
+
+    INSTAGRAM_COOKIES_PATH:
+    process.env.INSTAGRAM_COOKIES_PATH ??
+    path.resolve("cookies", "instagram.txt"),
 };

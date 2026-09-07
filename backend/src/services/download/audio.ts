@@ -40,10 +40,6 @@ export async function downloadAudio(
     await new Promise<void>((resolve, reject) => {
         const process = spawnYtDlp(args);
 
-        process.stdout.on("data", (chunk) => {
-            const text = chunk.toString();
-        });
-
         process.stderr.on("data", (chunk) => {
             const text = chunk.toString();
 

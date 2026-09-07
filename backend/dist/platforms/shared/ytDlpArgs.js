@@ -10,6 +10,9 @@ async function buildMetadataArgs(url, platform) {
         args.push("--js-runtimes", "node");
         args.push(...await (0, cookies_js_1.getYouTubeCookiesArgs)());
     }
+    if (platform === "instagram") {
+        args.push(...await (0, cookies_js_1.getInstagramCookiesArgs)());
+    }
     args.push("--dump-single-json", "--skip-download", "--no-playlist", url);
     return args;
 }
@@ -21,6 +24,9 @@ async function buildVideoArgs(url, output, quality, platform) {
         args.push("--no-playlist", "-f", `bestvideo[height<=${quality}]+bestaudio/best[height<=${quality}]`, "--merge-output-format", "mp4");
     }
     else {
+        if (platform === "instagram") {
+            args.push(...await (0, cookies_js_1.getInstagramCookiesArgs)());
+        }
         args.push("--no-playlist", "-f", `best[height<=${quality}]/best`);
     }
     args.push("-o", output, url);
@@ -31,6 +37,9 @@ async function buildAudioArgs(url, output, quality, platform) {
     if (platform === "youtube") {
         args.push("--js-runtimes", "node");
         args.push(...await (0, cookies_js_1.getYouTubeCookiesArgs)());
+    }
+    if (platform === "instagram") {
+        args.push(...await (0, cookies_js_1.getInstagramCookiesArgs)());
     }
     args.push("--no-playlist", "-x", "--audio-format", "mp3", "--audio-quality", `${quality}K`, "-o", output, url);
     return args;

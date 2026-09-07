@@ -3,23 +3,40 @@ import fs from "node:fs/promises";
 import { ENV } from "../../config/environment.js";
 import { logger } from "../../logger/logger.js";
 
-export async function getYouTubeCookiesArgs(): Promise<string[]> {
+async function buildCookieArgs(
+    path: string,
+    platform: string
+): Promise<string[]> {
     try {
-        await fs.access(ENV.YOUTUBE_COOKIES_PATH);
+        await fs.access(path);
 
         logger.info(
-            `Using YouTube cookies: ${ENV.YOUTUBE_COOKIES_PATH}`
+            `Using ${platform} cookies: ${path}`
         );
 
         return [
             "--cookies",
-            ENV.YOUTUBE_COOKIES_PATH,
+            path,
         ];
     } catch {
         logger.warn(
-            "YouTube cookies not found."
+            `${platform} cookies not found.`
         );
 
         return [];
     }
+}
+
+export function getYouTubeCookiesArgs() {
+    return buildCookieArgs(
+        ENV.YOUTUBE_COOKIES_PATH,
+        "YouTube"
+    );
+}
+
+export function getInstagramCookiesArgs() {
+    return buildCookieArgs(
+        ENV.INSTAGRAM_COOKIES_PATH,
+        "Instagram"
+    );
 }
