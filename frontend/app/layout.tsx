@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "sonner";
 
 import "./globals.css";
+import Script from "next/dist/client/script";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,17 +16,23 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Media Downloader",
-  description:
-    "Download media from YouTube, Instagram and TikTok.",
-  icons: {
-    icon: {
-      url: "/media-logo-outline.svg",
-      type: "image/svg+xml",
+    title: "Media Downloader",
+    description:
+        "Download, convert and process media from YouTube, Instagram and TikTok.",
+
+    manifest: "/manifest.webmanifest",
+
+    icons: {
+    icon: "/icons/favicon.ico",
+    shortcut: "/icons/favicon.ico",
+    apple: "/icons/apple-touch-icon.png",
+},
+
+    appleWebApp: {
+        capable: true,
+        statusBarStyle: "black-translucent",
+        title: "Media Downloader",
     },
-    shortcut: "/media-logo-outline.svg",
-    apple: "/media-logo-outline.svg",
-  },
 };
 
 export default function RootLayout({
@@ -48,6 +55,15 @@ export default function RootLayout({
           closeButton
           theme="dark"
         />
+        <Script id="register-sw" strategy="afterInteractive">
+{`
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js');
+    });
+}
+`}
+</Script>
       </body>
     </html>
   );
