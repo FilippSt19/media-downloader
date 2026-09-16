@@ -2,39 +2,65 @@
 
 import { useState } from "react";
 
+import Hero from "@/components/shared/Hero";
+import FeatureCard from "@/components/shared/FeatureCard";
+
+import UploadZone from "./UploadZone";
+import ConversionPreview from "./ConversionPreview";
+import FormatSelector from "./FormatSelector";
+import ConvertButton from "./ConvertButton";
 
 export default function Converter() {
-	const [fileName, setFileName] = useState<string | null>(null);
+    const [file, setFile] = useState<File | null>(null);
 
-	return (
-		<section className="mx-auto flex w-full max-w-3xl flex-1 flex-col justify-center px-6 py-20">
-			<div className="text-center">
-				<p className="mb-4 text-sm font-medium uppercase tracking-[0.25em] text-zinc-500">
-					Simple. Fast. Flexible.
-				</p>
-				<h1 className="text-4xl font-bold tracking-tight sm:text-6xl">
-					Convert your media.
-				</h1>
-				<p className="mx-auto mt-6 max-w-xl text-base leading-7 text-zinc-400 sm:text-lg">
-					Select a file to start converting it to another format.
-				</p>
-			</div>
+    const [format, setFormat] =
+        useState("MP3");
 
-			<label className="mt-10 cursor-pointer rounded-2xl border border-dashed border-white/20 bg-white/[0.03] p-10 text-center transition hover:border-white/40">
-				<input
-					type="file"
-					className="sr-only"
-					onChange={(event) =>
-						setFileName(event.target.files?.[0]?.name ?? null)
-					}
-				/>
-				<span className="text-zinc-300">
-					{fileName ?? "Choose a media file"}
-				</span>
-				<span className="mt-2 block text-sm text-zinc-500">
-					MP4, MP3, WAV, JPG and more
-				</span>
-			</label>
-		</section>
-	);
+    const [loading] =
+        useState(false);
+
+    function handleConvert() {
+        console.log(file);
+        console.log(format);
+    }
+
+    return (
+        <section className="mx-auto flex w-full max-w-3xl flex-1 flex-col justify-center px-6 py-20">
+
+            <Hero
+                title="Convert media."
+                subtitle="Your way."
+                description="Upload a media file, choose the output format and convert it in seconds."
+            />
+
+            <FeatureCard>
+
+                <UploadZone
+                    file={file}
+                    onFileSelect={setFile}
+                />
+
+                <ConversionPreview
+                    file={file}
+                />
+
+                {file && (
+                    <>
+                        <FormatSelector
+                            value={format}
+                            onChange={setFormat}
+                        />
+
+                        <ConvertButton
+                            disabled={!file}
+                            loading={loading}
+                            onClick={handleConvert}
+                        />
+                    </>
+                )}
+
+            </FeatureCard>
+
+        </section>
+    );
 }

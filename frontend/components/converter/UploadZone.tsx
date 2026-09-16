@@ -47,14 +47,6 @@ export default function UploadZone({
             <p className="mt-2 text-zinc-500">
                 or browse your computer
             </p>
-
-            <p className="mt-8 text-center text-sm leading-6 text-zinc-600">
-                Supports MP4, MOV, WEBM,
-                <br />
-                MP3, WAV, FLAC,
-                <br />
-                PNG, JPG and more.
-            </p>
         </label>
     );
 }
