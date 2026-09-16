@@ -9,7 +9,7 @@ import {
   Sparkles,
 } from "lucide-react";
 
-import ToolCard from "@/components/ToolCard";
+import ToolCard from "@/components/download/ToolCard";
 
 const tools = [
   {

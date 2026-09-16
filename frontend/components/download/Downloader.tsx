@@ -3,9 +3,9 @@
 import { useState } from "react";
 import { API } from "@/config/api";
 
-import PlatformBadge from "./PlatformBadge";
-import UrlInput from "./UrlInput";
-import MediaPreview from "./MediaPreview";
+import PlatformBadge from "../download/PlatformBadge";
+import UrlInput from "../download/UrlInput";
+import MediaPreview from "../download/MediaPreview";
 
 type AnalyzeResult = {
   success: boolean;

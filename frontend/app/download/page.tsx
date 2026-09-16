@@ -1,5 +1,5 @@
-import Downloader from "@/components/Downloader";
-import Header from "@/components/Header";
+import Downloader from "@/components/download/Downloader";
+import Header from "@/components/download/Header";
 
 export default function Home() {
   return (
