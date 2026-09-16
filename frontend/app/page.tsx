@@ -25,7 +25,9 @@ const tools = [
     title: "Convert",
     description:
       "Convert video, audio and images between popular formats.",
+    href: "/convert",
     icon: RefreshCw,
+    status: "ready" as const,
     accent: "purple" as const,
   },
   {
