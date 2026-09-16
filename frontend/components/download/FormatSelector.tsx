@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { API } from "@/config/api";
-import { useDownloadProgress } from "@/hooks/useDownloadProgress";
+import { useDownloadProgress } from "@/hooks/download/useDownloadProgress";
 import { toast } from "sonner";
 
 type VideoFormat = {
