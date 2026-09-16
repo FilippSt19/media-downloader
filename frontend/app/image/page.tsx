@@ -1,5 +1,6 @@
 import Downloader from "@/components/download/Downloader";
 import Header from "@/components/download/Header";
+import Hero from "@/components/shared/Hero";
 <Hero
     title="Edit images."
     subtitle="Your way."

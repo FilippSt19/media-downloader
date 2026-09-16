@@ -6,6 +6,7 @@ import { API } from "@/config/api";
 import PlatformBadge from "../download/PlatformBadge";
 import UrlInput from "../download/UrlInput";
 import MediaPreview from "../download/MediaPreview";
+import FeatureCard from "@/components/shared/FeatureCard";
 
 type AnalyzeResult = {
   success: boolean;
@@ -103,7 +104,7 @@ export default function Downloader() {
         </p>
       </div>
 
-      <div className="mt-10 rounded-2xl border border-white/10 bg-white/[0.03] p-3">
+      <FeatureCard>
         <UrlInput
           url={url}
           onUrlChange={setUrl}
@@ -111,7 +112,7 @@ export default function Downloader() {
           onReset={handleReset}
           isLoading={isLoading}
         />
-      </div>
+      </FeatureCard>
 
       <div className="mt-6 flex flex-wrap justify-center gap-3">
         <PlatformBadge name="YouTube" />
