@@ -1,20 +1,13 @@
 type FormatSelectorProps = {
     value: string;
     onChange: (format: string) => void;
+    formats: string[];
 };
-
-const formats = [
-    "MP3",
-    "WAV",
-    "MP4",
-    "MOV",
-    "WEBM",
-    "GIF",
-];
 
 export default function FormatSelector({
     value,
     onChange,
+    formats,
 }: FormatSelectorProps) {
     return (
         <div className="mt-6">

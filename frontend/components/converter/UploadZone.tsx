@@ -5,11 +5,17 @@ import { Upload } from "lucide-react";
 type UploadZoneProps = {
     file: File | null;
     onFileSelect: (file: File | null) => void;
+    accept: string;
+    label: string;
+    description: string;
 };
 
 export default function UploadZone({
     file,
     onFileSelect,
+    accept,
+    label,
+    description,
 }: UploadZoneProps) {
     return (
         <label
@@ -26,6 +32,7 @@ export default function UploadZone({
             <input
                 type="file"
                 className="hidden"
+                accept={accept}
                 onChange={(event) =>
                     onFileSelect(
                         event.target.files?.[0] ?? null
@@ -41,11 +48,11 @@ export default function UploadZone({
             <h2 className="text-xl font-semibold text-white">
                 {file
                     ? file.name
-                    : "Drop a media file"}
+                    : label}
             </h2>
 
             <p className="mt-2 text-zinc-500">
-                or browse your computer
+                {description}
             </p>
         </label>
     );
