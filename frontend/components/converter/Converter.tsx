@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import {
+    ArrowLeft,
     Check,
     Download,
     FileText,
@@ -141,6 +143,13 @@ export default function Converter() {
 
     return (
         <section className="mx-auto flex w-full max-w-3xl flex-1 flex-col justify-center px-6 py-20">
+            <Link
+                href="/"
+                className="mb-8 inline-flex w-fit items-center gap-2 rounded-xl border border-white/10 px-4 py-2 text-sm font-medium text-zinc-400 transition hover:bg-white/[0.06] hover:text-white"
+            >
+                <ArrowLeft className="h-4 w-4" />
+                Back to home
+            </Link>
 
             <Hero
                 title="Convert media."

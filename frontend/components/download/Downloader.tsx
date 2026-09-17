@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { API } from "@/config/api";
 
 import PlatformBadge from "../download/PlatformBadge";
@@ -86,6 +88,14 @@ export default function Downloader() {
 
   return (
     <section className="mx-auto flex w-full max-w-3xl flex-1 flex-col justify-center px-6 py-20">
+      <Link
+        href="/"
+        className="mb-8 inline-flex w-fit items-center gap-2 rounded-xl border border-white/10 px-4 py-2 text-sm font-medium text-zinc-400 transition hover:bg-white/[0.06] hover:text-white"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        Back to home
+      </Link>
+
       <div className="text-center">
         <p className="mb-4 text-sm font-medium uppercase tracking-[0.25em] text-zinc-500">
           Simple. Fast. Flexible.
