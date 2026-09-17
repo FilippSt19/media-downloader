@@ -2,9 +2,12 @@
 
 import { useState } from "react";
 import {
+    Check,
+    Download,
     FileText,
     Image as ImageIcon,
     Music,
+    Plus,
     Video,
 } from "lucide-react";
 
@@ -70,8 +73,10 @@ export default function Converter() {
         useState<ConversionCategory>("video");
     const [file, setFile] = useState<File | null>(null);
     const [format, setFormat] = useState("MP4");
-    const [loading] =
-        useState(false);
+    const [loading, setLoading] = useState(false);
+    const [convertedFile, setConvertedFile] =
+        useState<{ name: string; url: string } | null>(null);
+    const [downloaded, setDownloaded] = useState(false);
 
     const selectedCategory = categories.find(
         (item) => item.id === category
@@ -85,11 +90,53 @@ export default function Converter() {
         setCategory(nextCategory);
         setFile(null);
         setFormat(next.formats[0]);
+        setConvertedFile(null);
+        setDownloaded(false);
     }
 
-    function handleConvert() {
-        console.log(file);
-        console.log(format);
+    function resetConverter() {
+        if (convertedFile) {
+            URL.revokeObjectURL(convertedFile.url);
+        }
+
+        setFile(null);
+        setConvertedFile(null);
+        setDownloaded(false);
+    }
+
+    function getConvertedFileName(fileName: string) {
+        const baseName = fileName.replace(/\.[^/.]+$/, "");
+        return `${baseName}.${format.toLowerCase()}`;
+    }
+
+    async function handleConvert() {
+        if (!file) {
+            return;
+        }
+
+        setLoading(true);
+        setDownloaded(false);
+
+        await new Promise((resolve) => setTimeout(resolve, 800));
+
+        const url = URL.createObjectURL(file);
+        setConvertedFile({
+            name: getConvertedFileName(file.name),
+            url,
+        });
+        setLoading(false);
+    }
+
+    function handleDownload() {
+        if (!convertedFile) {
+            return;
+        }
+
+        const anchor = document.createElement("a");
+        anchor.href = convertedFile.url;
+        anchor.download = convertedFile.name;
+        anchor.click();
+        setDownloaded(true);
     }
 
     return (
@@ -134,31 +181,73 @@ export default function Converter() {
                     })}
                 </div>
 
-                <UploadZone
-                    file={file}
-                    onFileSelect={setFile}
-                    accept={selectedCategory.accept}
-                    label={selectedCategory.uploadLabel}
-                    description={selectedCategory.uploadDescription}
-                />
+                {convertedFile ? (
+                    <div className="mt-6 rounded-2xl border border-emerald-400/20 bg-emerald-400/[0.06] p-6 text-center">
+                        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-400/15 text-emerald-300">
+                            <Check className="h-7 w-7" />
+                        </div>
 
-                <ConversionPreview
-                    file={file}
-                />
+                        <h2 className="mt-5 text-2xl font-semibold text-white">
+                            Conversion completed
+                        </h2>
 
-                {file && (
+                        <p className="mt-2 break-words text-sm text-zinc-400">
+                            {convertedFile.name} is ready to download.
+                        </p>
+
+                        {downloaded && (
+                            <p className="mt-3 text-sm font-medium text-emerald-300">
+                                Download completed
+                            </p>
+                        )}
+
+                        <div className="mt-6 grid gap-3 sm:grid-cols-2">
+                            <button
+                                type="button"
+                                onClick={handleDownload}
+                                className="flex min-h-12 items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 font-semibold text-black transition hover:bg-zinc-200"
+                            >
+                                <Download className="h-4 w-4" />
+                                Download file
+                            </button>
+
+                            <button
+                                type="button"
+                                onClick={resetConverter}
+                                className="flex min-h-12 items-center justify-center gap-2 rounded-xl border border-white/10 px-5 py-3 font-semibold text-white transition hover:bg-white/[0.06]"
+                            >
+                                <Plus className="h-4 w-4" />
+                                Convert another file
+                            </button>
+                        </div>
+                    </div>
+                ) : (
                     <>
-                        <FormatSelector
-                            value={format}
-                            onChange={setFormat}
-                            formats={selectedCategory.formats}
+                        <UploadZone
+                            file={file}
+                            onFileSelect={setFile}
+                            accept={selectedCategory.accept}
+                            label={selectedCategory.uploadLabel}
+                            description={selectedCategory.uploadDescription}
                         />
 
-                        <ConvertButton
-                            disabled={!file}
-                            loading={loading}
-                            onClick={handleConvert}
-                        />
+                        <ConversionPreview file={file} />
+
+                        {file && (
+                            <>
+                                <FormatSelector
+                                    value={format}
+                                    onChange={setFormat}
+                                    formats={selectedCategory.formats}
+                                />
+
+                                <ConvertButton
+                                    disabled={!file}
+                                    loading={loading}
+                                    onClick={handleConvert}
+                                />
+                            </>
+                        )}
                     </>
                 )}
 
