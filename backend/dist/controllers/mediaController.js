@@ -2,10 +2,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.analyzeMedia = analyzeMedia;
 exports.downloadMediaFile = downloadMediaFile;
+exports.convertMediaFile = convertMediaFile;
 const AppError_js_1 = require("../errors/AppError.js");
 const logger_js_1 = require("../logger/logger.js");
 const mediaService_js_1 = require("../services/mediaService.js");
 const downloadService_js_1 = require("../services/downloadService.js");
+const conversionService_js_1 = require("../services/conversionService.js");
 async function analyzeMedia(req, res) {
     try {
         const { url } = req.body;
@@ -60,6 +62,48 @@ async function downloadMediaFile(req, res) {
         res.status(500).json({
             success: false,
             message: "Unable to download media.",
+        });
+    }
+}
+async function convertMediaFile(req, res) {
+    const file = req.file;
+    let convertedFile = null;
+    try {
+        if (!file) {
+            res.status(400).json({
+                success: false,
+                message: "A file is required.",
+            });
+            return;
+        }
+        const { category, format } = req.body;
+        const result = await (0, conversionService_js_1.convertMedia)({
+            buffer: file.buffer,
+            originalName: file.originalname,
+            category,
+            format,
+        });
+        convertedFile = result.filePath;
+        res.download(result.filePath, result.fileName, async (error) => {
+            await (0, conversionService_js_1.removeConversionFiles)(result.filePath);
+            if (error)
+                logger_js_1.logger.error(error);
+        });
+    }
+    catch (error) {
+        if (convertedFile)
+            await (0, conversionService_js_1.removeConversionFiles)(convertedFile);
+        logger_js_1.logger.error(error);
+        if (error instanceof AppError_js_1.AppError) {
+            res.status(error.statusCode).json({
+                success: false,
+                message: error.message,
+            });
+            return;
+        }
+        res.status(500).json({
+            success: false,
+            message: "Unable to convert media.",
         });
     }
 }

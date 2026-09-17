@@ -1,4 +1,5 @@
 import type { Request, Response } from "express";
+import type { MulterRequest } from "../types/multer.js";
 
 import { AppError } from "../errors/AppError.js";
 import { logger } from "../logger/logger.js";
@@ -7,6 +8,10 @@ import {
     downloadMedia,
     removeDownloadedFile,
 } from "../services/downloadService.js";
+import {
+    convertMedia,
+    removeConversionFiles,
+} from "../services/conversionService.js";
 
 export async function analyzeMedia(
     req: Request,
@@ -83,6 +88,55 @@ export async function downloadMediaFile(
         res.status(500).json({
             success: false,
             message: "Unable to download media.",
+        });
+    }
+}
+
+export async function convertMediaFile(
+    req: Request,
+    res: Response
+): Promise<void> {
+    const file = (req as MulterRequest).file;
+    let convertedFile: string | null = null;
+
+    try {
+        if (!file) {
+            res.status(400).json({
+                success: false,
+                message: "A file is required.",
+            });
+            return;
+        }
+
+        const { category, format } = req.body;
+        const result = await convertMedia({
+            buffer: file.buffer,
+            originalName: file.originalname,
+            category,
+            format,
+        });
+
+        convertedFile = result.filePath;
+        res.download(result.filePath, result.fileName, async (error) => {
+            await removeConversionFiles(result.filePath);
+
+            if (error) logger.error(error);
+        });
+    } catch (error) {
+        if (convertedFile) await removeConversionFiles(convertedFile);
+        logger.error(error);
+
+        if (error instanceof AppError) {
+            res.status(error.statusCode).json({
+                success: false,
+                message: error.message,
+            });
+            return;
+        }
+
+        res.status(500).json({
+            success: false,
+            message: "Unable to convert media.",
         });
     }
 }

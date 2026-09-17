@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { API } from "@/config/api";
 import {
     ArrowLeft,
     Check,
@@ -46,9 +47,9 @@ const categories: {
         label: "Photo",
         icon: ImageIcon,
         accept: "image/*",
-        formats: ["JPG", "PNG", "WEBP", "GIF", "AVIF"],
+        formats: ["JPG", "PNG", "WEBP", "SVG", "AVIF"],
         uploadLabel: "Drop a photo",
-        uploadDescription: "JPG, PNG, WEBP, GIF or AVIF",
+        uploadDescription: "JPG, PNG, WEBP, SVG or AVIF",
     },
     {
         id: "document",
@@ -79,6 +80,7 @@ export default function Converter() {
     const [convertedFile, setConvertedFile] =
         useState<{ name: string; url: string } | null>(null);
     const [downloaded, setDownloaded] = useState(false);
+    const [error, setError] = useState("");
 
     const selectedCategory = categories.find(
         (item) => item.id === category
@@ -94,6 +96,7 @@ export default function Converter() {
         setFormat(next.formats[0]);
         setConvertedFile(null);
         setDownloaded(false);
+        setError("");
     }
 
     function resetConverter() {
@@ -104,11 +107,7 @@ export default function Converter() {
         setFile(null);
         setConvertedFile(null);
         setDownloaded(false);
-    }
-
-    function getConvertedFileName(fileName: string) {
-        const baseName = fileName.replace(/\.[^/.]+$/, "");
-        return `${baseName}.${format.toLowerCase()}`;
+        setError("");
     }
 
     async function handleConvert() {
@@ -118,15 +117,46 @@ export default function Converter() {
 
         setLoading(true);
         setDownloaded(false);
+        setError("");
 
-        await new Promise((resolve) => setTimeout(resolve, 800));
+        try {
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("category", category);
+            formData.append("format", format.toLowerCase());
 
-        const url = URL.createObjectURL(file);
-        setConvertedFile({
-            name: getConvertedFileName(file.name),
-            url,
-        });
-        setLoading(false);
+            const response = await fetch(`${API.BASE_URL}/api/media/convert`, {
+                method: "POST",
+                body: formData,
+            });
+
+            if (!response.ok) {
+                const data = await response.json().catch(() => null);
+                throw new Error(data?.message || `Conversion failed (${response.status})`);
+            }
+
+            const contentDisposition = response.headers.get("content-disposition");
+            const match = contentDisposition?.match(
+                /filename\*?=(?:UTF-8''|")?([^";]+)/
+            );
+            const fileName = match?.[1]
+                ? decodeURIComponent(match[1].replace(/"/g, ""))
+                : `${file.name.replace(/\.[^/.]+$/, "")}.${format.toLowerCase()}`;
+            const blob = await response.blob();
+
+            setConvertedFile({
+                name: fileName,
+                url: URL.createObjectURL(blob),
+            });
+        } catch (conversionError) {
+            setError(
+                conversionError instanceof Error
+                    ? conversionError.message
+                    : "Unable to convert this file."
+            );
+        } finally {
+            setLoading(false);
+        }
     }
 
     function handleDownload() {
@@ -241,6 +271,12 @@ export default function Converter() {
                         />
 
                         <ConversionPreview file={file} />
+
+                        {error && (
+                            <p className="mt-4 rounded-xl border border-red-400/20 bg-red-400/[0.06] px-4 py-3 text-sm text-red-300">
+                                {error}
+                            </p>
+                        )}
 
                         {file && (
                             <>
