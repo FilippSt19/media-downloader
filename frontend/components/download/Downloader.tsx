@@ -68,6 +68,14 @@ export default function Downloader() {
         }
       );
 
+      const contentType = response.headers.get("content-type") ?? "";
+
+      if (!contentType.includes("application/json")) {
+        throw new Error(
+          "The API returned an HTML page. Check NEXT_PUBLIC_API_BASE_URL."
+        );
+      }
+
       const data: AnalyzeResult = await response.json();
 
       if (!response.ok) {
