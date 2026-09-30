@@ -9,7 +9,7 @@
     "rebuild": "docker compose down && docker compose build --no-cache backend && docker compose up backend"
   },
   "devDependencies": {
-    "concurrently": "^9.0.1"
+    "concurrently": "^9.2.4"
   },
   "dependencies": {
     "pwa-asset-generator": "^8.1.5",

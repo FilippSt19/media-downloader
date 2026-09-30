@@ -1,97 +1,199 @@
-# Media Downloader
+# 🎬 Media Studio
 
-A modern full-stack media downloader built with **Next.js**, **Express**, **TypeScript**, **Docker**, **Socket.IO**, **yt-dlp**, and **FFmpeg**.
+A modern full-stack media platform built with **Next.js**, **Express**, **TypeScript**, **Docker**, **Socket.IO**, **yt-dlp**, **FFmpeg**, and deployed on **Microsoft Azure**.
 
-The application allows users to analyze media from multiple platforms, preview metadata, choose the preferred download format and quality, and download content directly from the browser.
+Media Studio provides a modern interface for downloading, converting and processing media from multiple platforms while offering a scalable architecture for future AI-powered features.
 
 ---
 
-## Features
+# ✨ Features
 
-### Supported Platforms
+## 📥 Download
+
+Supported platforms
 
 - YouTube
 - Instagram
+  - Posts
+  - Reels
+  - Stories
 - TikTok
 
-### Current
+Current features
 
-- Media URL analysis
-- Video metadata extraction
+- URL analysis
+- Metadata extraction
 - Thumbnail preview
 - Video duration
 - Channel / Author information
-- MP3 download
-- MP4 download
-- Multiple quality selection
-- Download progress (Socket.IO)
+- Multiple video qualities
+- MP3 downloads
+- MP4 downloads
+- Real-time download progress
+- Socket.IO progress updates
 - Download queue
-- Responsive interface
-- Application branding
-- Toast notifications
-- Request validation (Zod)
-- Swagger API documentation
-- Centralized logging
-- Dockerized backend
-
-### Planned
-
-- YouTube playlists
-- Download history
-- Download settings
-- Progressive Web App (PWA)
-- Desktop application
-- Unit tests
-- Integration tests
+- Request validation
+- Swagger documentation
 
 ---
 
-# Project Structure
+## 🔄 Converter
+
+Currently in development.
+
+Planned modules
+
+### 🎬 Video
+
+- MP4 → MP3
+- MP4 → GIF
+- MOV → MP4
+- WEBM → MP4
+- MKV → MP4
+
+### 🎵 Audio
+
+- MP3 ↔ WAV
+- AAC ↔ MP3
+- FLAC ↔ MP3
+- M4A ↔ MP3
+
+### 🖼 Images
+
+- PNG ↔ JPG
+- PNG ↔ WEBP
+- WEBP ↔ JPG
+- HEIC ↔ JPG
+- SVG ↔ PNG
+
+### 📄 Documents
+
+- PDF ↔ DOCX
+- DOCX ↔ PDF
+- PPTX → PDF
+- XLSX → PDF
+- TXT → PDF
+
+---
+
+## 🤖 AI (Planned)
+
+- Automatic subtitles
+- Subtitle translation
+- AI summaries
+- Speaker detection
+- Voice enhancement
+
+---
+
+## 🎥 Video Tools (Planned)
+
+- Trim
+- Merge
+- Crop
+- Resize
+- Compress
+- Change playback speed
+
+---
+
+## 🖼 Image Tools (Planned)
+
+- Remove background
+- OCR
+- Image compression
+- Resize
+- Format optimization
+
+---
+
+## 🔊 Audio Tools (Planned)
+
+- Noise reduction
+- Volume normalization
+- Voice enhancement
+
+---
+
+# 📱 Progressive Web App
+
+Media Studio can be installed as a native application on desktop and mobile devices.
+
+Features
+
+- Installable on Android
+- Installable on Windows
+- Standalone mode
+- Responsive design
+- Mobile-first interface
+
+---
+
+# ☁ Cloud
+
+Hosted on Microsoft Azure.
+
+Services
+
+- Azure Container Apps
+- Azure Container Registry
+
+---
+
+# 🏗 Project Structure
 
 ```text
-media-downloader/
-│
+media-studio/
+
 ├── frontend/
+│
 │   ├── app/
+│   │   ├── download/
+│   │   ├── convert/
+│   │   ├── ai/
+│   │   └── ...
+│   │
 │   ├── components/
-│   ├── config/
+│   │   ├── download/
+│   │   ├── converter/
+│   │   └── shared/
+│   │
 │   ├── hooks/
+│   ├── config/
 │   ├── public/
-│   ├── package.json
 │   └── ...
 │
 ├── backend/
+│
 │   ├── src/
-│   │   ├── config/
-│   │   ├── controllers/
-│   │   ├── download/
-│   │   ├── errors/
-│   │   ├── logger/
-│   │   ├── middleware/
-│   │   ├── platforms/
-│   │   │   ├── shared/
-│   │   │   ├── youtube/
-│   │   │   ├── instagram/
-│   │   │   └── tiktok/
-│   │   ├── routes/
-│   │   ├── services/
-│   │   ├── socket/
-│   │   ├── types/
-│   │   ├── utils/
-│   │   ├── validation/
-│   │   └── server.ts
 │   │
-│   ├── Dockerfile
-│   ├── package.json
-│   └── ...
+│   ├── config/
+│   ├── controllers/
+│   ├── download/
+│   ├── converter/
+│   ├── middleware/
+│   ├── platforms/
+│   │
+│   │   ├── youtube/
+│   │   ├── instagram/
+│   │   ├── tiktok/
+│   │   └── shared/
+│   │
+│   ├── routes/
+│   ├── services/
+│   ├── socket/
+│   ├── utils/
+│   ├── validation/
+│   └── server.ts
 │
 ├── compose.yaml
+├── deploy.ps1
 └── README.md
 ```
 
 ---
 
-# Tech Stack
+# 🛠 Tech Stack
 
 ## Frontend
 
@@ -124,20 +226,13 @@ media-downloader/
 
 - Docker
 - Rancher Desktop
+- Microsoft Azure
 
 ---
 
-# Requirements
+# 🚀 Installation
 
-- Node.js 22+
-- Docker / Rancher Desktop
-- Git
-
----
-
-# Installation
-
-Clone the repository
+Clone repository
 
 ```bash
 git clone https://github.com/FilippSt19/media-downloader.git
@@ -145,71 +240,41 @@ git clone https://github.com/FilippSt19/media-downloader.git
 cd media-downloader
 ```
 
----
-
-# Frontend
+Install dependencies
 
 ```bash
-cd frontend
-
 npm install
-
-npm run dev
 ```
 
-Application
+---
 
-```text
+# 💻 Local Development
+
+Run the complete application
+
+```bash
+docker compose up -d --build
+```
+
+Frontend
+
+```
 http://localhost:3000
 ```
 
----
+Backend
 
-# Backend
-
-```bash
-cd backend
-
-npm install
-
-npm run dev
 ```
-
-API
-
-```text
 http://localhost:4000
 ```
 
 Swagger
 
-```text
+```
 http://localhost:4000/docs
 ```
 
----
-
-# Docker
-
-Build containers
-
-```bash
-docker compose build
-```
-
-Start services
-
-```bash
-docker compose up
-```
-
-Run in background
-
-```bash
-docker compose up -d
-```
-
-Stop services
+Stop containers
 
 ```bash
 docker compose down
@@ -217,7 +282,7 @@ docker compose down
 
 ---
 
-# API
+# 📡 API
 
 ## Health
 
@@ -230,7 +295,7 @@ Response
 ```json
 {
   "status": "ok",
-  "service": "media-downloader-api"
+  "service": "media-studio-api"
 }
 ```
 
@@ -250,25 +315,6 @@ Request
 }
 ```
 
-Response
-
-```json
-{
-  "success": true,
-  "platform": "youtube",
-  "media": {
-    "title": "Video title",
-    "thumbnail": "...",
-    "duration": 123,
-    "uploader": "Channel",
-    "formats": {
-      "video": [],
-      "audio": []
-    }
-  }
-}
-```
-
 ---
 
 ## Download Media
@@ -281,7 +327,7 @@ Video
 
 ```json
 {
-  "url": "https://youtu.be/example",
+  "url": "...",
   "type": "video",
   "quality": 1080
 }
@@ -291,7 +337,7 @@ Audio
 
 ```json
 {
-  "url": "https://youtu.be/example",
+  "url": "...",
   "type": "audio",
   "quality": 192
 }
@@ -299,76 +345,75 @@ Audio
 
 ---
 
-# Architecture
+# 🏛 Architecture
 
-```
-Next.js
-      │
-      ▼
- REST API
-      │
-      ▼
-Express
-      │
-      ├──────────────► Socket.IO
-      │                     │
-      ▼                     ▼
- Platform Services     Download Progress
-      │
-      ▼
-yt-dlp
-      │
-      ▼
-FFmpeg
-```
+```text
+                    Media Studio
 
----
+                          │
 
-# Available Scripts
+      ┌───────────────────┼───────────────────┐
+      │                   │                   │
 
-## Frontend
+  Download            Converter             AI
 
-```bash
-npm run dev
-npm run build
-npm run lint
-```
+      │                   │                   │
 
-## Backend
+      └───────────────────┼───────────────────┘
+                          │
 
-```bash
-npm run dev
-npm run build
+                    Express API
+
+                          │
+
+                Platform Services
+
+                          │
+
+                yt-dlp / FFmpeg
+
+                          │
+
+                Azure Container Apps
 ```
 
 ---
 
-# Roadmap
+# 🗺 Roadmap
 
-## Version 1.1
+## Version 1.0
 
-- YouTube playlists
-- Download history
-- Download settings
-- Mobile improvements
-
-## Version 1.2
-
-- Progressive Web App
-- Desktop application
-- Batch downloads
-- Retry downloads
+- Download dashboard
+- YouTube
+- Instagram
+- TikTok
+- PWA
+- Azure deployment
 
 ## Version 2.0
 
-- User accounts
-- Cloud synchronization
-- Production deployment
+- Video Converter
+- Audio Converter
+- Image Converter
+- Document Converter
+
+## Version 2.1
+
+- AI features
+- Automatic subtitles
+- Translation
+- Video summary
+
+## Version 2.2
+
+- Video Tools
+- Image Tools
+- Audio Tools
 
 ---
 
-# License
+# 📄 License
 
 This project is intended for educational and portfolio purposes.
 
-Users are responsible for ensuring they have the right to download any media and for complying with the terms of service of the supported platforms and applicable copyright laws.
+Users are responsible for ensuring they have the right to download or process media and documents and for complying with copyright laws and the terms of service of supported platforms.
