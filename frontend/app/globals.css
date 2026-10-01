@@ -24,3 +24,27 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.settings-large-text {
+  font-size: 18px;
+}
+
+.settings-high-contrast body {
+  background: #000;
+  color: #fff;
+}
+
+.settings-high-contrast .text-zinc-400,
+.settings-high-contrast .text-zinc-500,
+.settings-high-contrast .text-zinc-600 {
+  color: #d4d4d8;
+}
+
+.settings-reduced-motion *,
+.settings-reduced-motion *::before,
+.settings-reduced-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  scroll-behavior: auto !important;
+  transition-duration: 0.01ms !important;
+}

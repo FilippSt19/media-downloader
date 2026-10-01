@@ -5,11 +5,11 @@ import {
   ImageIcon,
   RefreshCw,
   Scissors,
-  Settings,
   Sparkles,
 } from "lucide-react";
 
 import ToolCard from "@/components/download/ToolCard";
+import SettingsPanel from "@/components/shared/SettingsPanel";
 
 const tools = [
   {
@@ -116,13 +116,7 @@ export default function HomePage() {
             </span>
           </nav>
 
-          <button
-            type="button"
-            aria-label="Settings"
-            className="flex h-10 w-10 items-center justify-center rounded-xl text-zinc-400 transition hover:bg-white/[0.06] hover:text-white"
-          >
-            <Settings className="h-5 w-5" />
-          </button>
+          <SettingsPanel compact />
         </div>
       </header>
 
