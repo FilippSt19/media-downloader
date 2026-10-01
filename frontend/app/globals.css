@@ -48,3 +48,65 @@ body {
   scroll-behavior: auto !important;
   transition-duration: 0.01ms !important;
 }
+
+.settings-light body {
+  background: #f4f6f8;
+  color: #172033;
+}
+
+.settings-light .theme-app {
+  background: #f4f6f8 !important;
+  color: #172033 !important;
+}
+
+.settings-light .theme-app header,
+.settings-light .theme-app footer {
+  border-color: #dfe3e8 !important;
+}
+
+.settings-light .theme-app .text-white {
+  color: #172033 !important;
+}
+
+.settings-light .theme-app .text-zinc-400,
+.settings-light .theme-app .text-zinc-500,
+.settings-light .theme-app .text-zinc-600 {
+  color: #5e6878 !important;
+}
+
+.settings-light .theme-app .theme-card {
+  border-color: #dfe3e8 !important;
+  background: #ffffff !important;
+  box-shadow: 0 16px 40px rgb(23 32 51 / 0.06);
+}
+
+.settings-light .theme-app .theme-card:hover {
+  border-color: #b9c3d0 !important;
+}
+
+.settings-light .settings-drawer {
+  border-color: #dfe3e8;
+  background: #ffffff;
+  color: #172033;
+}
+
+.settings-light .settings-drawer .text-white {
+  color: #172033 !important;
+}
+
+.settings-light .settings-drawer .text-zinc-200,
+.settings-light .settings-drawer .text-zinc-400,
+.settings-light .settings-drawer .text-zinc-500,
+.settings-light .settings-drawer .text-zinc-600 {
+  color: #5e6878 !important;
+}
+
+.settings-light .settings-drawer .border-white\/\[0\.07\],
+.settings-light .settings-drawer .border-white\/10,
+.settings-light .settings-drawer .divide-white\/\[0\.06\] > :not([hidden]) ~ :not([hidden]) {
+  border-color: #dfe3e8 !important;
+}
+
+.settings-light .settings-drawer .bg-white\/\[0\.02\] {
+  background: #f4f6f8 !important;
+}

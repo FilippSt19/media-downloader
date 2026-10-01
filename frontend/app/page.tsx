@@ -63,7 +63,7 @@ const tools = [
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen bg-[#08090b] text-white">
+    <main className="theme-app min-h-screen bg-[#08090b] text-white">
       <header className="border-b border-white/[0.06]">
         <div className="mx-auto flex h-20 w-full max-w-6xl items-center justify-between px-5 sm:px-8">
           <Link

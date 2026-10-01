@@ -61,7 +61,7 @@ export default function ToolCard({
   const content = (
     <article
       className={`
-        group flex h-full flex-col rounded-3xl
+        theme-card group flex h-full flex-col rounded-3xl
         border border-white/10 bg-white/[0.025] p-6
         transition-all duration-300
         hover:-translate-y-2 hover:scale-[1.015] hover:border-white/20

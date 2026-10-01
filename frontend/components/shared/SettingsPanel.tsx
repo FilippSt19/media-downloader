@@ -21,6 +21,7 @@ type SettingsPanelProps = {
 const preferenceKey = "media-studio-preferences";
 
 type Preferences = {
+  theme: "dark" | "light";
   highContrast: boolean;
   largeText: boolean;
   reducedMotion: boolean;
@@ -28,6 +29,7 @@ type Preferences = {
 };
 
 const defaultPreferences: Preferences = {
+  theme: "dark",
   highContrast: false,
   largeText: false,
   reducedMotion: false,
@@ -58,6 +60,7 @@ function loadPreferences(): Preferences {
 
 function applyPreferences(preferences: Preferences) {
   const root = document.documentElement;
+  root.classList.toggle("settings-light", preferences.theme === "light");
   root.classList.toggle("settings-high-contrast", preferences.highContrast);
   root.classList.toggle("settings-large-text", preferences.largeText);
   root.classList.toggle("settings-reduced-motion", preferences.reducedMotion);
@@ -99,7 +102,10 @@ export default function SettingsPanel({ compact = false }: SettingsPanelProps) {
     };
   }, [open]);
 
-  const updatePreference = (key: keyof Preferences, value: boolean) => {
+  const updatePreference = <Key extends keyof Preferences>(
+    key: Key,
+    value: Preferences[Key],
+  ) => {
     const nextPreferences = { ...preferences, [key]: value };
     setPreferences(nextPreferences);
     window.localStorage.setItem(preferenceKey, JSON.stringify(nextPreferences));
@@ -127,7 +133,7 @@ export default function SettingsPanel({ compact = false }: SettingsPanelProps) {
             className="absolute inset-0 h-full w-full cursor-default bg-black/60 backdrop-blur-sm"
           />
 
-          <aside className="absolute right-0 top-0 flex h-full w-full max-w-md flex-col border-l border-white/10 bg-[#111316] shadow-2xl shadow-black/40">
+          <aside className="settings-drawer absolute right-0 top-0 flex h-full w-full max-w-md flex-col border-l border-white/10 bg-[#111316] shadow-2xl shadow-black/40">
             <div className="flex items-center justify-between border-b border-white/[0.07] px-6 py-5">
               <div>
                 <p className="text-xs font-medium uppercase tracking-[0.2em] text-blue-400">Workspace</p>
@@ -150,15 +156,16 @@ export default function SettingsPanel({ compact = false }: SettingsPanelProps) {
                   <h3 id="appearance-heading">Appearance</h3>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
-                  <button type="button" aria-pressed="true" className="flex items-center justify-center gap-2 rounded-xl border border-blue-400/50 bg-blue-400/10 px-3 py-3 text-sm text-white">
+                  <button type="button" aria-pressed={preferences.theme === "dark"} onClick={() => updatePreference("theme", "dark")} className={`flex items-center justify-center gap-2 rounded-xl border px-3 py-3 text-sm transition ${preferences.theme === "dark" ? "border-blue-400/50 bg-blue-400/10 text-white" : "border-white/[0.07] text-zinc-500"}`}>
                     <Moon className="h-4 w-4" /> Dark
-                    <Check className="ml-auto h-4 w-4 text-blue-300" />
+                    {preferences.theme === "dark" && <Check className="ml-auto h-4 w-4 text-blue-300" />}
                   </button>
-                  <button type="button" disabled className="flex cursor-not-allowed items-center justify-center gap-2 rounded-xl border border-white/[0.07] px-3 py-3 text-sm text-zinc-600">
+                  <button type="button" aria-pressed={preferences.theme === "light"} onClick={() => updatePreference("theme", "light")} className={`flex items-center justify-center gap-2 rounded-xl border px-3 py-3 text-sm transition ${preferences.theme === "light" ? "border-amber-400/60 bg-amber-400/10 text-zinc-900" : "border-white/[0.07] text-zinc-500"}`}>
                     <Sun className="h-4 w-4" /> Light
+                    {preferences.theme === "light" && <Check className="ml-auto h-4 w-4 text-amber-500" />}
                   </button>
                 </div>
-                <p className="mt-2 text-xs text-zinc-500">Light theme will be available soon.</p>
+                <p className="mt-2 text-xs text-zinc-500">Choose the theme that feels right for your workspace.</p>
               </section>
 
               <section aria-labelledby="accessibility-heading" className="mt-8">
