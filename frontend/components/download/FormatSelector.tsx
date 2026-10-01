@@ -35,7 +35,7 @@ export default function FormatSelector({
     videoFormats[0]?.height.toString() ?? ""
   );
   const [isDownloading, setIsDownloading] = useState(false);
-  const [error, setError] = useState("");
+  const [, setError] = useState("");
   const { progress, status } = useDownloadProgress();
 
   const selectVideo = () => {

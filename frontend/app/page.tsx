@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import {
   AudioLines,
   Download,
@@ -69,9 +70,11 @@ export default function HomePage() {
             href="/"
             className="flex items-center gap-3 font-bold"
           >
-            <img
+            <Image
               src="/media_logo.svg"
               alt="Media Studio"
+              width={28}
+              height={28}
               className="h-7 w-7"
             />
 

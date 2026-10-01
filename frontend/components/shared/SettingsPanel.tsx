@@ -34,6 +34,28 @@ const defaultPreferences: Preferences = {
   rememberFormat: true,
 };
 
+function loadPreferences(): Preferences {
+  if (typeof window === "undefined") {
+    return defaultPreferences;
+  }
+
+  const stored = window.localStorage.getItem(preferenceKey);
+
+  if (!stored) {
+    return defaultPreferences;
+  }
+
+  try {
+    return {
+      ...defaultPreferences,
+      ...JSON.parse(stored),
+    };
+  } catch {
+    window.localStorage.removeItem(preferenceKey);
+    return defaultPreferences;
+  }
+}
+
 function applyPreferences(preferences: Preferences) {
   const root = document.documentElement;
   root.classList.toggle("settings-high-contrast", preferences.highContrast);
@@ -46,21 +68,16 @@ export default function SettingsPanel({ compact = false }: SettingsPanelProps) {
   const [preferences, setPreferences] = useState(defaultPreferences);
 
   useEffect(() => {
-    const stored = window.localStorage.getItem(preferenceKey);
+    const timeoutId = window.setTimeout(() => {
+      setPreferences(loadPreferences());
+    }, 0);
 
-    if (stored) {
-      try {
-        const nextPreferences = {
-          ...defaultPreferences,
-          ...JSON.parse(stored),
-        };
-        setPreferences(nextPreferences);
-        applyPreferences(nextPreferences);
-      } catch {
-        window.localStorage.removeItem(preferenceKey);
-      }
-    }
+    return () => window.clearTimeout(timeoutId);
   }, []);
+
+  useEffect(() => {
+    applyPreferences(preferences);
+  }, [preferences]);
 
   useEffect(() => {
     if (!open) {
