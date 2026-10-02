@@ -49,6 +49,10 @@ Invoke-AzureCommand "Building and pushing backend image" {
     az acr build --registry $Registry --image "backend:v$Version" .\backend
 }
 
+if (Test-Path ".\frontend\.next") {
+    Remove-Item ".\frontend\.next" -Recurse -Force
+}
+
 Invoke-AzureCommand "Building and pushing frontend image" {
     az acr build `
         --registry $Registry `
